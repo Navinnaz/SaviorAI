@@ -1,0 +1,62 @@
+## SECTION 1 — PROJECT IDENTITY
+
+**Name:** GuardianAI  
+**Tagline:** *The autonomous agent that catches student burnout before it becomes a tragedy.*  
+**Theme:** Agentic & Autonomous Systems  
+**One-line pitch:** "One student dies by suicide every 40 minutes in India. GuardianAI is the autonomous agent that watches what counsellors can't — 24/7, at scale, before the crisis."
+
+---
+
+## SECTION 2 — SYSTEM ARCHITECTURE
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        GUARDIAN AI SYSTEM                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  STUDENT LAYER                                                   │
+│  ┌──────────────┐    ┌──────────────────────────────────────┐   │
+│  │  WhatsApp    │───▶│  Twilio Webhook → FastAPI Ingestion  │   │
+│  │  Check-ins   │    └──────────────────────────────────────┘   │
+│  └──────────────┘                      │                        │
+│                                        ▼                        │
+│  AGENT CORE (The Brain)                                         │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │                                                          │   │
+│  │  ┌─────────────┐  ┌──────────────┐  ┌────────────────┐  │   │
+│  │  │    HMM      │  │  Adversarial │  │    Cohort      │  │   │
+│  │  │  Burnout    │  │  Validation  │  │   Anomaly      │  │   │
+│  │  │   States   │  │   Engine     │  │  Detector      │  │   │
+│  │  │ (Stable/   │  │ (Gaming      │  │ (Systemic      │  │   │
+│  │  │  At-Risk/  │  │  Detection)  │  │  Stressors)    │  │   │
+│  │  │  Crisis)   │  │              │  │                │  │   │
+│  │  └──────┬──────┘  └──────┬───────┘  └───────┬────────┘  │   │
+│  │         └────────────────┴──────────────────┘           │   │
+│  │                          │                               │   │
+│  │                          ▼                               │   │
+│  │              ┌───────────────────────┐                   │   │
+│  │              │   GPT-4o Reasoning    │                   │   │
+│  │              │   + Alert Generation  │                   │   │
+│  │              └───────────┬───────────┘                   │   │
+│  │                          │                               │   │
+│  └──────────────────────────┼───────────────────────────────┘   │
+│                             ▼                                    │
+│  INTERVENTION LAYER                                              │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  Level 1: Peer nudge  │  Level 2: Counsellor alert        │  │
+│  │  Level 3: Emergency   │  Level 4: Institutional report    │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                             │                                    │
+│                             ▼                                    │
+│  DASHBOARD LAYER                                                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  React PWA  │  Risk Heatmap  │  Student Profiles         │   │
+│  │  Counsellor Queue  │  Cohort Trends  │  Action Log       │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│  DATA LAYER                                                      │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │            PostgreSQL (via Railway)                        │  │
+│  └────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
