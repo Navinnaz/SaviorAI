@@ -24,8 +24,7 @@ from typing import Dict, Optional, Tuple
 from datetime import datetime
 from fastapi import APIRouter, Form, Request, BackgroundTasks, HTTPException
 from fastapi.responses import Response
-import hmac
-import hashlib
+from twilio.request_validator import RequestValidator
 
 from database.connection import get_db_session
 from database import crud
@@ -59,7 +58,7 @@ def get_intervention_orchestrator() -> InterventionOrchestrator:
 
 def validate_twilio_signature(request: Request, form_data: Dict[str, str]) -> bool:
     """
-    Validate Twilio webhook signature for security.
+    Validate Twilio webhook signature using official Twilio SDK.
     
     Twilio signs all webhooks with HMAC-SHA256 to prevent spoofing.
     
@@ -81,27 +80,19 @@ def validate_twilio_signature(request: Request, form_data: Dict[str, str]) -> bo
         logger.error("No X-Twilio-Signature header found")
         return False
     
-    # Build URL (Twilio needs exact URL including query params)
+    # Get full URL
     url = str(request.url)
     
-    # Concatenate URL and sorted form parameters
-    data_string = url + "".join([f"{k}{v}" for k, v in sorted(form_data.items())])
-    
-    # Compute HMAC-SHA256
-    expected_signature = hmac.new(
-        auth_token.encode("utf-8"),
-        data_string.encode("utf-8"),
-        hashlib.sha256
-    ).digest()
-    
-    # Compare signatures (base64 encoded)
-    import base64
-    expected_sig_b64 = base64.b64encode(expected_signature).decode()
-    
-    is_valid = hmac.compare_digest(signature, expected_sig_b64)
+    # Use official Twilio validator
+    validator = RequestValidator(auth_token)
+    is_valid = validator.validate(url, form_data, signature)
+
+    print("URL:", url)
+    print("FORM:", form_data)
+    print("SIGNATURE:", signature)
     
     if not is_valid:
-        logger.error(f"Invalid Twilio signature: expected {expected_sig_b64[:20]}..., got {signature[:20]}...")
+        logger.error(f"Invalid Twilio signature for URL: {url}")
     
     return is_valid
 
@@ -360,7 +351,7 @@ async def whatsapp_webhook(
     Parses check-in data and triggers full autonomous agent pipeline.
     
     CRITICAL: Must respond within 5 seconds (Twilio timeout).
-    Heavy processing happens in background task.
+    ALL processing happens in background tasks for <500ms response.
     
     Args:
         request: FastAPI request (for signature validation)
@@ -377,17 +368,16 @@ async def whatsapp_webhook(
     2. Parse check-in message
     3. Look up student by phone
     4. Save check-in to database
-    5. Send confirmation to student
-    6. Trigger background agent pipeline
-    7. Return 200 OK to Twilio
+    5. Return 200 OK immediately (<500ms)
+    6. Background: Send confirmation + run agent pipeline
     """
+    print("\n🔥🔥🔥 WEBHOOK RECEIVED 🔥🔥🔥\n")
     start_time = datetime.utcnow()
     
     logger.info(f"Received WhatsApp message: From={From}, SID={MessageSid}")
-    logger.debug(f"Message body: {Body[:100]}")
     
-    # STEP 1: Validate Twilio signature
-    form_data = {"Body": Body, "From": From, "MessageSid": MessageSid}
+    # STEP 1: Validate Twilio signature (using official SDK)
+    form_data = dict(await request.form())
     
     if not validate_twilio_signature(request, form_data):
         logger.error("Invalid Twilio signature - possible spoofing attempt")
@@ -399,9 +389,9 @@ async def whatsapp_webhook(
     if not checkin_data:
         logger.warning(f"Failed to parse check-in from: {Body[:100]}")
         
-        # Send help message
-        whatsapp = get_whatsapp_service()
-        whatsapp.send_message(
+        # Send help message in background
+        background_tasks.add_task(
+            get_whatsapp_service().send_message,
             From,
             "Sorry, I couldn't understand that. Please reply with:\n"
             "Your mood score (1-5), ate properly (yes/no), and one word.\n"
@@ -413,15 +403,15 @@ async def whatsapp_webhook(
     try:
         async with get_db_session() as db:
             # STEP 3: Look up student by phone
-            # Remove whatsapp: prefix for database lookup
             phone = From.replace("whatsapp:", "")
             student = await crud.get_student_by_phone(db, phone)
             
             if not student:
                 logger.warning(f"Unknown phone number: {phone}")
                 
-                whatsapp = get_whatsapp_service()
-                whatsapp.send_message(
+                # Send error message in background
+                background_tasks.add_task(
+                    get_whatsapp_service().send_message,
                     From,
                     "I don't recognize this number. Please contact your institution "
                     "to register with GuardianAI."
@@ -431,10 +421,10 @@ async def whatsapp_webhook(
             
             logger.info(f"Check-in from: {student.name} (ID: {student.id})")
             
-            # STEP 4: Analyze sentiment of one_word
+            # STEP 4: Analyze sentiment
             sentiment_data = analyze_sentiment(checkin_data["one_word"])
             
-            # STEP 5: Save check-in to database
+            # STEP 5: Save check-in to database (FAST - must complete in <500ms)
             checkin_id = await crud.save_checkin(db, {
                 "student_id": str(student.id),
                 "checked_in_at": datetime.utcnow(),
@@ -449,30 +439,33 @@ async def whatsapp_webhook(
             
             logger.info(f"Check-in saved: ID={checkin_id}")
             
-            # STEP 6: Send confirmation to student
-            whatsapp = get_whatsapp_service()
-            whatsapp.send_confirmation(From, checkin_data["score"])
+            # Calculate response time (should be <500ms)
+            elapsed = (datetime.utcnow() - start_time).total_seconds()
+            logger.info(f"Webhook processed in {elapsed:.3f}s")
             
-            # STEP 7: Trigger background agent pipeline
+            if elapsed > 0.5:
+                logger.warning(f"Webhook response time exceeded 500ms: {elapsed:.3f}s")
+            
+            # STEP 6: Queue background tasks (run AFTER response sent)
+            # This prevents Twilio timeout
+            background_tasks.add_task(
+                get_whatsapp_service().send_confirmation,
+                From,
+                checkin_data["score"]
+            )
+            
             background_tasks.add_task(
                 process_checkin_pipeline,
                 str(student.id),
                 checkin_data,
                 phone
             )
-            
-            # Calculate response time
-            elapsed = (datetime.utcnow() - start_time).total_seconds()
-            logger.info(f"Webhook processed in {elapsed:.3f}s")
-            
-            if elapsed > 4.0:
-                logger.warning(f"Webhook response time exceeded 4s: {elapsed:.3f}s")
     
     except Exception as e:
         logger.error(f"Error processing webhook: {e}", exc_info=True)
         # Still return 200 to Twilio to avoid retries
     
-    # STEP 8: Return empty 200 OK to Twilio
+    # STEP 7: Return 200 OK immediately (total time <500ms)
     return Response(content="", media_type="text/plain")
 
 

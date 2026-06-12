@@ -20,6 +20,9 @@ from database.connection import init_db, close_db
 # Import routers
 from routes import webhook, students, dashboard, interventions, cohorts
 
+# Import scheduler
+from services.scheduler import start_scheduler, stop_scheduler
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -32,9 +35,13 @@ async def lifespan(app: FastAPI):
     await init_db()
     print("✅ GuardianAI database connection pool initialized")
     
+    # Start scheduler
+    start_scheduler()
+    
     yield
     
     # Shutdown
+    stop_scheduler()
     await close_db()
     print("🔌 GuardianAI database connections closed")
 

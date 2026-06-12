@@ -16,6 +16,7 @@ twilio==8.11.1
 
 # Scheduling for daily check-ins
 apscheduler==3.10.4
+pytz==2024.1
 
 # Environment variables
 python-dotenv==1.0.0
