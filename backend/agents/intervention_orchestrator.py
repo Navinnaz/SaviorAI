@@ -582,5 +582,15 @@ Masking behavior itself can indicate distress.
         """
         if isinstance(timestamp, str):
             timestamp = parser.parse(timestamp)
-        hours = (datetime.utcnow() - timestamp).total_seconds() / 3600
+        
+        # Make sure we're comparing timezone-aware datetimes
+        now = datetime.now(datetime.UTC) if hasattr(datetime, 'UTC') else datetime.utcnow()
+        
+        # If timestamp is timezone-aware and now is not, make now aware
+        if timestamp.tzinfo is not None and (not hasattr(datetime, 'UTC')):
+            # Use UTC timezone for comparison
+            from datetime import timezone
+            now = datetime.now(timezone.utc)
+        
+        hours = (now - timestamp).total_seconds() / 3600
         return hours

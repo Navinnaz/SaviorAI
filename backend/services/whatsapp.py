@@ -207,26 +207,34 @@ For support: Contact campus counselling center or call 1800-XXX-XXXX (Helpline)"
         logger.critical(f"Sending EMERGENCY alert for student {student_name}")
         return self.send_message(emergency_phone, message)
     
-    def send_confirmation(self, to_phone: str, score: int) -> bool:
+    def send_confirmation(self, to_phone: str, score: int, ate_properly: str = None, one_word: str = None) -> bool:
         """
         Send check-in confirmation back to student.
         
         Args:
             to_phone: Student phone number
             score: Their mood score (1-5)
+            ate_properly: Eating response (yes/mostly/no)
+            one_word: Their one-word feeling
         
         Returns:
             True if sent successfully, False otherwise
         """
-        # Personalized responses based on score
-        if score >= 4:
-            response = "Thanks for checking in! 💙 Glad to hear you're doing well. Keep it up!"
-        elif score == 3:
-            response = "Thanks for checking in! 💙 Remember, we're here if you need support."
-        else:  # score <= 2
-            response = "Thanks for checking in. 💙 We're here for you. Don't hesitate to reach out if you need someone to talk to."
+        # Detailed confirmation with parsed data
+        if ate_properly and one_word:
+            response = f"Got it! Score: {score}/5, Eating: {ate_properly}, Feeling: {one_word} ✅"
+        else:
+            response = f"Got it! Score: {score}/5 ✅"
         
-        logger.debug(f"Sending check-in confirmation (score={score})")
+        # Add encouraging message based on score
+        if score >= 4:
+            response += "\n\nGreat to hear! Keep it up! 💙"
+        elif score == 3:
+            response += "\n\nThanks for sharing. We're here if you need us. 💙"
+        else:  # score <= 2
+            response += "\n\nWe're here for you. Don't hesitate to reach out if you need support. 💙"
+        
+        logger.debug(f"Sending check-in confirmation (score={score}, ate={ate_properly}, word={one_word})")
         return self.send_message(to_phone, response)
     
     def send_institutional_report(

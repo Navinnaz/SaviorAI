@@ -49,7 +49,7 @@ async def init_db():
     Called on application startup.
     """
     # Import models to ensure they're registered with Base
-    from database import models
+    from backend.database import models
     
     # Create tables if they don't exist
     # In production, use Alembic for migrations instead

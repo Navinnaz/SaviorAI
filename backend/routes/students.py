@@ -9,8 +9,8 @@ from sqlalchemy import select
 from typing import List
 from uuid import UUID
 
-from database import get_db
-from database.models import Student, Institution
+from backend.database.connection import get_db
+from backend.database.models import Student, Institution
 
 router = APIRouter()
 

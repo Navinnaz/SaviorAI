@@ -14,14 +14,14 @@ import statistics
 from dotenv import load_dotenv
 load_dotenv()
 
-from services.whatsapp import get_whatsapp_service
-from database.connection import AsyncSessionLocal
-from database.models import Student, CheckIn, BurnoutState, Intervention
-from database import crud
-from agents.hmm_engine import BurnoutHMM
-from agents.adversarial_validator import AdversarialValidator
-from agents.cohort_detector import CohortDetector
-from agents.intervention_orchestrator import InterventionOrchestrator
+from backend.services.whatsapp import get_whatsapp_service
+from backend.database.connection import AsyncSessionLocal
+from backend.database.models import Student, CheckIn, BurnoutState, Intervention
+from backend.database import crud
+from backend.agents.hmm_engine import BurnoutHMM
+from backend.agents.adversarial_validator import AdversarialValidator
+from backend.agents.cohort_detector import CohortAnomalyDetector
+from backend.agents.intervention_orchestrator import InterventionOrchestrator
 from sqlalchemy import select, and_, func
 import logging
 
@@ -31,7 +31,7 @@ scheduler = AsyncIOScheduler()
 # Initialize agents
 hmm_engine = BurnoutHMM()
 adversarial_validator = AdversarialValidator()
-cohort_detector = CohortDetector()
+cohort_detector = CohortAnomalyDetector()
 
 
 async def daily_checkin_blast():
@@ -250,6 +250,7 @@ def start_scheduler():
         id="daily_checkin_blast",
         replace_existing=True
     )
+    
     
     # JOB 2: Morning risk scan at 8:00 AM IST
     scheduler.add_job(

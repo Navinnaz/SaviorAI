@@ -3,7 +3,7 @@ const API_KEY = 'guardianai_dev_key_2024'
 
 // Get institution ID from localStorage or use default
 const getInstitutionId = () => {
-  return localStorage.getItem('institutionId') || '747f60be-c964-448f-879c-04291df5941d'
+  return localStorage.getItem('institutionId') || '06d5af82-b343-4ccc-a5e9-6f01bebfaf41'
 }
 
 export const setInstitutionId = (id) => {

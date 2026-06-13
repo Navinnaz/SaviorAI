@@ -6,8 +6,16 @@ import './index.css'
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    // Request notification permission first
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        console.log('Notification permission:', permission)
+      })
+    }
+    
+    // Register service worker
     navigator.serviceWorker
-      .register('/serviceWorker.js')
+      .register('/serviceWorker.js', { scope: '/' })
       .then(registration => {
         console.log('✅ GuardianAI Service Worker registered:', registration.scope)
       })

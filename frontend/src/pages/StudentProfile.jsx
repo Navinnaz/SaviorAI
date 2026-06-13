@@ -129,24 +129,54 @@ function StudentProfile() {
       <div className="bg-dark-card border border-dark-border rounded-lg p-6">
         <h2 className="text-xl font-bold text-white mb-4">Mental Health State Timeline</h2>
         <div className="space-y-2">
-          {state_history.map((state, i) => (
-            <div key={i} className="flex items-center space-x-4">
-              <div className="text-xs text-gray-500 w-32">
-                {new Date(state.assessed_at).toLocaleDateString()}
+          {/* Show only the most recent assessment per day for cleaner timeline */}
+          {state_history.reduce((acc, state) => {
+            const date = new Date(state.assessed_at).toLocaleDateString()
+            // Keep only the last assessment for each date
+            const existingIndex = acc.findIndex(s => new Date(s.assessed_at).toLocaleDateString() === date)
+            if (existingIndex >= 0) {
+              // Replace with later assessment
+              if (new Date(state.assessed_at) > new Date(acc[existingIndex].assessed_at)) {
+                acc[existingIndex] = state
+              }
+            } else {
+              acc.push(state)
+            }
+            return acc
+          }, []).map((state, i) => {
+            // Calculate display percentage based on state + trend
+            let displayPercentage
+            if (state.state === 'crisis') {
+              displayPercentage = 85 + Math.min(state.consecutive_low_days * 2, 10)
+            } else if (state.state === 'at_risk') {
+              displayPercentage = 50 + Math.max(Math.abs(state.trend_score) * 10, 0)
+            } else {
+              displayPercentage = Math.max(15 - (state.trend_score > 0 ? state.trend_score * 5 : 0), 5)
+            }
+            displayPercentage = Math.round(Math.min(displayPercentage, 95))
+            
+            return (
+              <div key={i} className="flex items-center space-x-4">
+                <div className="text-xs text-gray-500 w-32">
+                  {new Date(state.assessed_at).toLocaleDateString()}
+                </div>
+                <div
+                  className="flex-1 h-8 rounded flex items-center px-4 text-sm font-semibold text-white"
+                  style={{ backgroundColor: stateColors[state.state] }}
+                >
+                  {state.state.toUpperCase()} ({displayPercentage}% risk)
+                  {state.variance_flag && <span className="ml-2">⚠️</span>}
+                  {state.cohort_flag && <span className="ml-2">👥</span>}
+                </div>
+                <div className="text-xs text-gray-500 w-24 text-right">
+                  Trend: {state.trend_score > 0 ? '+' : ''}{state.trend_score.toFixed(1)}
+                </div>
               </div>
-              <div
-                className="flex-1 h-8 rounded flex items-center px-4 text-sm font-semibold text-white"
-                style={{ backgroundColor: stateColors[state.state] }}
-              >
-                {state.state.toUpperCase()} ({(state.hmm_probability * 100).toFixed(0)}%)
-                {state.variance_flag && <span className="ml-2">⚠️</span>}
-                {state.cohort_flag && <span className="ml-2">👥</span>}
-              </div>
-              <div className="text-xs text-gray-500 w-24 text-right">
-                Trend: {state.trend_score > 0 ? '+' : ''}{state.trend_score.toFixed(1)}
-              </div>
-            </div>
-          ))}
+            )
+          })}
+        </div>
+        <div className="mt-4 text-xs text-gray-500">
+          Showing most recent assessment per day. Total assessments: {state_history.length}
         </div>
       </div>
 

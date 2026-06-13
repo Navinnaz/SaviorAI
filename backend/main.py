@@ -15,13 +15,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import database connection
-from database.connection import init_db, close_db
+from backend.database.connection import init_db, close_db
 
 # Import routers
-from routes import webhook, students, dashboard, interventions, cohorts
+from backend.routes import webhook, students, dashboard, interventions, cohorts
 
 # Import scheduler
-from services.scheduler import start_scheduler, stop_scheduler
+from backend.services.scheduler import start_scheduler, stop_scheduler
 
 
 @asynccontextmanager
@@ -90,7 +90,7 @@ async def health_check():
     """
     Detailed health check for monitoring.
     """
-    from database.connection import engine
+    from backend.database.connection import engine
     
     db_status = "connected" if engine else "disconnected"
     
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     import uvicorn
     
     uvicorn.run(
-        "main:app",
+        "backend.main:app",
         host="0.0.0.0",
         port=8000,
         reload=os.getenv("DEBUG", "false").lower() == "true"

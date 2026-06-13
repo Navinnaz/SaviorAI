@@ -9,8 +9,8 @@ from sqlalchemy import select
 from datetime import datetime, timedelta
 from uuid import UUID
 
-from database import get_db
-from database.models import Intervention, Student
+from backend.database.connection import get_db
+from backend.database.models import Intervention, Student
 
 router = APIRouter()
 

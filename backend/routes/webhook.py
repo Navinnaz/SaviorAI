@@ -26,13 +26,13 @@ from fastapi import APIRouter, Form, Request, BackgroundTasks, HTTPException
 from fastapi.responses import Response
 from twilio.request_validator import RequestValidator
 
-from database.connection import get_db_session
-from database import crud
-from agents.hmm_engine import BurnoutHMM
-from agents.adversarial_validator import AdversarialValidator
-from agents.intervention_orchestrator import InterventionOrchestrator
-from services.whatsapp import get_whatsapp_service
-from services.sentiment import analyze_sentiment
+from backend.database.connection import get_db_session
+from backend.database import crud
+from backend.agents.hmm_engine import BurnoutHMM
+from backend.agents.adversarial_validator import AdversarialValidator
+from backend.agents.intervention_orchestrator import InterventionOrchestrator
+from backend.services.whatsapp import get_whatsapp_service
+from backend.services.sentiment import analyze_sentiment
 
 logger = logging.getLogger(__name__)
 
@@ -439,6 +439,9 @@ async def whatsapp_webhook(
             
             logger.info(f"Check-in saved: ID={checkin_id}")
             
+            # COMMIT the transaction so data is persisted
+            await db.commit()
+            
             # Calculate response time (should be <500ms)
             elapsed = (datetime.utcnow() - start_time).total_seconds()
             logger.info(f"Webhook processed in {elapsed:.3f}s")
@@ -451,7 +454,9 @@ async def whatsapp_webhook(
             background_tasks.add_task(
                 get_whatsapp_service().send_confirmation,
                 From,
-                checkin_data["score"]
+                checkin_data["score"],
+                checkin_data["ate_properly"],
+                checkin_data["one_word"]
             )
             
             background_tasks.add_task(

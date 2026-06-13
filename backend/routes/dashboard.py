@@ -18,8 +18,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, func, desc, or_
 
-from database.connection import get_db
-from database import crud, models
+from backend.database.connection import get_db
+from backend.database import crud, models
 
 logger = logging.getLogger(__name__)
 
@@ -223,7 +223,27 @@ async def get_institution_heatmap(
         
         if latest_state:
             state = latest_state.state
-            risk_score = int(latest_state.hmm_probability * 100)
+            
+            # Map state to meaningful risk score (0-100)
+            # HMM probability has numerical underflow, so we use state + modifiers
+            if state == "crisis":
+                # Crisis: base 85-95 risk
+                base_risk = 85
+                # Add points for consecutive low days (up to +10)
+                consecutive_bonus = min(latest_state.consecutive_low_days * 2, 10)
+                risk_score = min(base_risk + consecutive_bonus, 95)
+            elif state == "at_risk":
+                # At-risk: base 50-70 risk
+                base_risk = 50
+                # Negative trend increases risk (up to +20)
+                trend_penalty = max(int(abs(latest_state.trend_score) * 10), 0) if latest_state.trend_score < 0 else 0
+                risk_score = min(base_risk + trend_penalty, 70)
+            else:  # stable
+                # Stable: 5-35 risk (everyone has some baseline risk)
+                base_risk = 15
+                # Slight positive trend reduces risk
+                trend_bonus = max(int(latest_state.trend_score * 5), 0) if latest_state.trend_score > 0 else 0
+                risk_score = max(base_risk - trend_bonus, 5)
             
             # Determine trend from trend_score
             if latest_state.trend_score < -0.5:
@@ -234,7 +254,7 @@ async def get_institution_heatmap(
                 trend = "stable"
         else:
             state = "stable"
-            risk_score = 0
+            risk_score = 10  # Unknown state gets low risk
             trend = "stable"
         
         # Get last check-in
@@ -254,6 +274,9 @@ async def get_institution_heatmap(
             "last_checkin": last_checkin.checked_in_at.isoformat() if last_checkin else None,
             "trend": trend
         })
+    
+    # Sort by risk score descending (highest risk first)
+    heatmap_data.sort(key=lambda x: x["risk_score"], reverse=True)
     
     return heatmap_data
 

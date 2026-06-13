@@ -46,14 +46,18 @@ self.addEventListener('activate', (event) => {
   
   self.clients.claim()
   
-  // Show installation notification
-  self.registration.showNotification('GuardianAI', {
-    body: 'GuardianAI is watching 👁️\nStudent mental health monitoring active.',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-72x72.png',
-    tag: 'guardianai-installed',
-    requireInteraction: false
-  })
+  // Show installation notification (only if permission granted)
+  if (Notification.permission === 'granted') {
+    self.registration.showNotification('GuardianAI', {
+      body: 'GuardianAI is watching 👁️\nStudent mental health monitoring active.',
+      icon: '/icons/icon-192x192.png',
+      badge: '/icons/icon-72x72.png',
+      tag: 'guardianai-installed',
+      requireInteraction: false
+    }).catch(err => console.log('Notification error:', err))
+  } else {
+    console.log('Notification permission not granted, skipping notification')
+  }
 })
 
 // Fetch event - serve from cache, fallback to network
