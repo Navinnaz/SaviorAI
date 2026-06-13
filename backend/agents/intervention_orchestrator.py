@@ -471,17 +471,17 @@ Requirements:
 Generate ONLY the message text. No preamble.
 """
         
-        logger.debug(f"Calling GPT-4o for level {level} message generation")
+        logger.debug(f"Calling GPT-4o-mini for level {level} message generation")
         
         response = await self.client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",  # Affordable: $0.15/1M input, $0.60/1M output (10x cheaper than gpt-4o)
             messages=[{"role": "user", "content": prompt}],
             max_tokens=300,
             temperature=0.7
         )
         
         message = response.choices[0].message.content.strip()
-        logger.debug(f"GPT-4o generated message: {len(message)} chars")
+        logger.debug(f"GPT-4o-mini generated message: {len(message)} chars")
         return message
     
     async def _handle_masking(self, student: dict, validation: dict) -> dict:
