@@ -1,17 +1,17 @@
 <div align="center">
 
 ```
- ██████╗ ██╗   ██╗ █████╗ ██████╗ ██████╗ ██╗ █████╗ ███╗   ██╗ █████╗ ██╗
-██╔════╝ ██║   ██║██╔══██╗██╔══██╗██╔══██╗██║██╔══██╗████╗  ██║██╔══██╗██║
-██║  ███╗██║   ██║███████║██████╔╝██║  ██║██║███████║██╔██╗ ██║███████║██║
-██║   ██║██║   ██║██╔══██║██╔══██╗██║  ██║██║██╔══██║██║╚██╗██║██╔══██║██║
-╚██████╔╝╚██████╔╝██║  ██║██║  ██║██████╔╝██║██║  ██║██║ ╚████║██║  ██║██║
- ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝
+███████╗ █████╗ ██╗   ██╗██╗ ██████╗ ██████╗  █████╗ ██╗
+██╔════╝██╔══██╗██║   ██║██║██╔═══██╗██╔══██╗██╔══██╗██║
+███████╗███████║██║   ██║██║██║   ██║██████╔╝███████║██║
+╚════██║██╔══██║╚╚██╗ ██╔╝██║██║   ██║██╔══██╗██╔══██║██║
+███████║██║  ██║ ╚████╔╝ ██║╚██████╔╝██║  ██║██║  ██║██║
+╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝
 ```
 
 ### *The autonomous agent that catches student burnout before it becomes a tragedy.*
 
-**One student dies by suicide every 40 minutes in India. GuardianAI is the agent that watches what counsellors can't — 24/7, at scale, before the crisis.**
+**One student dies by suicide every 40 minutes in India. SaviorAI is the agent that watches what counsellors can't — 24/7, at scale, before the crisis.**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
@@ -32,20 +32,7 @@
 
 Counsellors are overwhelmed: 1 counsellor per 2,000 students at most institutions. By the time a student reaches crisis, it's too late. Traditional mental health apps focus on meditation and mood journals — they don't **act autonomously** when patterns scream danger.
 
-GuardianAI doesn't wait. **It watches. It reasons. It escalates. It saves lives.**
-
----
-
-## 🎬 Demo
-
-> **Note:** Replace with actual demo GIF after recording: `![Demo](./demo.gif)`
-
-**See it in action:**
-1. Student sends daily WhatsApp check-in: `"2 no tired"`
-2. System detects declining pattern (HMM: `at_risk` → `crisis`)
-3. Agent autonomously escalates to counsellor with reasoning
-4. Dashboard shows risk heatmap, sorted by urgency
-5. Cohort detector flags systemic batch-level stressors
+SaviorAI doesn't wait. **It watches. It reasons. It escalates. It saves lives.**
 
 ---
 
@@ -53,7 +40,7 @@ GuardianAI doesn't wait. **It watches. It reasons. It escalates. It saves lives.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        GUARDIAN AI SYSTEM                       │
+│                        SAVIOR AI SYSTEM                         │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  STUDENT LAYER                                                   │
@@ -107,7 +94,7 @@ GuardianAI doesn't wait. **It watches. It reasons. It escalates. It saves lives.
 
 ## 🤖 What Makes It Genuinely Agentic
 
-Unlike wellness apps that passively log moods, GuardianAI is a **true autonomous agent**:
+Unlike wellness apps that passively log moods, SaviorAI is a **true autonomous agent**:
 
 ### 1. **HMM Burnout State Machine** 🧠
 - Probabilistic state detection: `Stable → At-Risk → Crisis`
@@ -123,6 +110,21 @@ Unlike wellness apps that passively log moods, GuardianAI is a **true autonomous
   - Sudden recovery after decline (possible masking)
 - **Critical innovation:** Real emotions have variance. Flatline = red flag itself.
 - **Production database configuration:** Optimized connection pooling for Railway cloud hosting with automatic retry logic, 10-second timeouts, and 30-minute connection recycling to handle sleep/wake cycles
+
+### 3. **Cohort Anomaly Detection** 👥
+- Identifies systemic stressors affecting entire batches (bad professor, unfair exam, hostel incident)
+- When 40%+ of a batch declines simultaneously → institutional alert, not individual counselling
+- **What individual apps can't do:** See forest-level patterns invisible at tree-level
+
+### 4. **Autonomous Intervention Loop** 🎯
+- **Perceive:** Daily check-ins via WhatsApp (500M+ users in India)
+- **Reason:** GPT-4o contextualizes patterns with student's own words
+- **Decide:** Selects intervention level (1-4) autonomously, no human approval loop
+- **Act:** Sends peer nudge, counsellor alert, or emergency escalation
+- **Observe:** Monitors response, adapts strategy
+- **Feedback:** Escalates if no improvement, de-escalates if recovered
+
+**No human makes the intervention decision. The agent does. That's autonomy.**
 
 ### 3. **Cohort Anomaly Detection** 👥
 - Identifies systemic stressors affecting entire batches (bad professor, unfair exam, hostel incident)
@@ -168,8 +170,8 @@ Unlike wellness apps that passively log moods, GuardianAI is a **true autonomous
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/GuardianAI.git
-cd GuardianAI
+git clone https://github.com/yourusername/SaviorAI.git
+cd SaviorAI
 
 # Backend setup
 python -m venv venv
@@ -234,7 +236,7 @@ npm run dev
 
 ## 🎭 Running the Demo
 
-GuardianAI includes a comprehensive demo runner with 3 scenarios:
+SaviorAI includes a comprehensive demo runner with 3 scenarios:
 
 ### Setup Demo Data (50 students, 14 days history)
 
@@ -249,7 +251,7 @@ python -m backend.utils.demo_runner --scenario setup
 ```
 
 **What it does:**
-- Creates 1 institution (IIT Delhi)
+- Creates 1 institution (Demo Example: IIT Delhi)
 - Generates 50 students across 4 batches
 - Backfills 14 days of realistic check-in history
 - Seeds crisis patterns (Priya Sharma: declining trajectory)
@@ -330,7 +332,7 @@ python -m backend.utils.demo_runner --scenario reset
 | **Autonomy** | Agent makes intervention decisions without human approval. Observes responses, adapts strategy (escalate/de-escalate). Runs 24/7 with no supervision. Automatic database connection recovery for cloud hosting resilience. |
 | **Multi-Agent Coordination** | 3-layer agent pipeline: (1) HMM state detector, (2) Adversarial validator, (3) Cohort analyzer. GPT-4o acts as reasoning layer, coordinating outputs into intervention decision. Intervention orchestrator synthesizes all three agents' outputs. |
 | **Real-World Impact** | Addresses 13,892 annual student suicides in India. Scales 1 counsellor to 10,000+ students. Production-ready with Twilio + Railway deployment. Live demo with 50 students, 14 days history, 6 real-time scenarios. |
-| **Technical Innovation** | HMM state machine (research-backed probabilistic model), adversarial gaming detection (unique to GuardianAI — no other app detects masking), cohort anomaly detection (systemic stressor identification), optimized cloud database pooling. |
+| **Technical Innovation** | HMM state machine (research-backed probabilistic model), adversarial gaming detection (unique to SaviorAI — no other app detects masking), cohort anomaly detection (systemic stressor identification), optimized cloud database pooling. |
 | **Explainability** | Every intervention includes agent reasoning chain visible to counsellors. Dashboard shows HMM probability, trend scores, consecutive low days, emotional keywords highlighted. Full transparency into "why" agent acted. |
 | **Code Quality** | FastAPI with type hints, SQLAlchemy ORM, async/await throughout, comprehensive error handling, documented agent classes, reproducible demo runner, optimized connection pooling for cloud hosting. |
 
@@ -338,14 +340,14 @@ python -m backend.utils.demo_runner --scenario reset
 
 ## 🌏 Japan Relevance — Examination Hell
 
-GuardianAI's **cohort anomaly detector** directly addresses Japan's "examination hell" (*juken jigoku*) phenomenon:
+SaviorAI's **cohort anomaly detector** directly addresses Japan's "examination hell" (*juken jigoku*) phenomenon:
 
 ### The Pattern
 - **Before entrance exams:** Entire cohorts of high school students deteriorate simultaneously
 - **Individual counselling fails:** When 60% of a class is in crisis, it's not 60 individual burnouts — it's a systemic stressor
 - **Traditional apps can't see it:** Individual wellness apps miss forest-level patterns
 
-### GuardianAI's Solution
+### SaviorAI's Solution
 1. **Cohort detector flags when 40%+ of batch declines together** (demonstrated in live demo with MECH-2023 batch)
 2. **Institutional L4 alert sent:** Not "Student A needs help" but "MECH-2023 shows systemic distress pattern affecting 12 students — recommend workload review, faculty meeting within 48 hours"
 3. **Proactive batch-level intervention:** Group counselling sessions, faculty meetings, exam schedule adjustments, prevention vs. individual crisis reaction
@@ -407,7 +409,7 @@ GuardianAI's **cohort anomaly detector** directly addresses Japan's "examination
 
 ## 🤝 Contributing
 
-GuardianAI is open for collaboration:
+SaviorAI is open for collaboration:
 
 1. **Agent improvements:** Better HMM transition matrices, enhanced gaming detection
 2. **Cultural adaptation:** Japan-specific features, language support
@@ -439,11 +441,11 @@ MIT License — see [LICENSE](./LICENSE) for details.
 <div align="center">
 
 **"One student dies by suicide every 40 minutes in India.**  
-**GuardianAI is the agent that catches them before the fall."**
+**SaviorAI is the agent that catches them before the fall."**
 
 ⭐ Star this repo if you believe AI can save lives, not just optimize profits.
 
-[Report Bug](https://github.com/yourusername/GuardianAI/issues) • [Request Feature](https://github.com/yourusername/GuardianAI/issues) • [Join Discussion](https://github.com/yourusername/GuardianAI/discussions)
+[Report Bug](https://github.com/yourusername/SaviorAI/issues) • [Request Feature](https://github.com/yourusername/SaviorAI/issues) • [Join Discussion](https://github.com/yourusername/SaviorAI/discussions)
 
 </div>
 
