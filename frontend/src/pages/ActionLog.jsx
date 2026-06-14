@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { getRecentInterventions } from '../utils/api'
 
 const levelColors = {
-  1: { bg: 'bg-accent-primary/20', text: 'text-accent-primary', label: 'Peer Nudge' },
-  2: { bg: 'bg-accent-warning/20', text: 'text-accent-warning', label: 'Counsellor Alert' },
-  3: { bg: 'bg-accent-danger/20', text: 'text-accent-danger', label: 'Emergency' },
-  4: { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Institutional' }
+  1: { bg: 'bg-accent-success/20', text: 'text-accent-success', label: 'PEER NUDGE', badgeBg: 'bg-accent-success/10', circle: '#26de81' },
+  2: { bg: 'bg-[#E67E22]/20', text: 'text-[#E67E22]', label: 'COUNSELLOR', badgeBg: 'bg-[#E67E22]/10', circle: '#E67E22' },
+  3: { bg: 'bg-accent-danger/20', text: 'text-accent-danger', label: 'EMERGENCY', badgeBg: 'bg-accent-danger/10', circle: '#ff4757' },
+  4: { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'INSTITUTIONAL', badgeBg: 'bg-purple-500/10', circle: '#a855f7' }
 }
 
 function ActionLog() {
@@ -22,6 +22,9 @@ function ActionLog() {
       try {
         const data = await getRecentInterventions(50)
         setInterventions(data)
+        // Auto-expand Level 3 entries
+        const level3Ids = new Set(data.filter(i => i.level === 3).map(i => i.id))
+        setExpandedIds(level3Ids)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -62,7 +65,7 @@ function ActionLog() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-enter">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -103,7 +106,7 @@ function ActionLog() {
           const count = interventions.filter(i => i.level === level).length
           const colors = levelColors[level]
           return (
-            <div key={level} className="bg-dark-card border border-dark-border rounded-lg p-4">
+            <div key={level} className={`bg-dark-card border border-dark-border rounded-lg p-4 ${colors.badgeBg}`}>
               <div className="text-sm text-gray-400 mb-1">{colors.label}</div>
               <div className={`text-2xl font-bold ${colors.text}`}>{count}</div>
             </div>
@@ -119,18 +122,41 @@ function ActionLog() {
           filteredInterventions.map((intervention) => {
             const colors = levelColors[intervention.level] || levelColors[1]
             const isExpanded = expandedIds.has(intervention.id)
+            const isLevel3 = intervention.level === 3
+            
+            // Check if intervention is new (within last 60 seconds)
+            const triggeredTime = new Date(intervention.triggered_at).getTime()
+            const now = Date.now()
+            const isNew = (now - triggeredTime) < 60000
 
             return (
               <div key={intervention.id} className={`
-                bg-dark-card border ${colors.bg} border-opacity-30 rounded-lg p-6 transition
+                bg-dark-card border rounded-lg p-6 transition
+                ${isLevel3 ? 'border-l-4 border-l-accent-danger bg-accent-danger/5' : 'border-dark-border'}
+                ${isLevel3 ? 'emergency-pulse' : ''}
               `}>
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-4">
-                    {/* Level Badge */}
-                    <div className={`${colors.bg} ${colors.text} px-4 py-2 rounded-lg text-sm font-bold`}>
-                      L{intervention.level}
+                    {/* Level Badge with Circle */}
+                    <div className="flex items-center space-x-2">
+                      <div 
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${isLevel3 ? 'emergency-pulse' : ''}`}
+                        style={{ backgroundColor: colors.circle }}
+                      >
+                        L{intervention.level}
+                      </div>
+                      <div className={`${colors.text} font-bold text-sm uppercase`}>
+                        {colors.label}
+                      </div>
                     </div>
+                    
+                    {/* NEW badge for recent interventions */}
+                    {isNew && (
+                      <span className="px-2 py-1 bg-accent-success text-white text-xs font-bold uppercase rounded live-pulse">
+                        NEW
+                      </span>
+                    )}
                     
                     {/* Student Info */}
                     <div>
@@ -152,22 +178,34 @@ function ActionLog() {
                   </div>
                 </div>
 
-                {/* Level Name & Recipient */}
+                {/* Recipient & Status */}
                 <div className="flex items-center space-x-4 mb-4 text-sm">
-                  <span className={`${colors.text} font-semibold`}>
-                    {intervention.level_name}
-                  </span>
-                  <span className="text-gray-400">→</span>
-                  <span className="text-gray-300">
-                    Recipient: {intervention.recipient}
+                  <span className="text-gray-400">Recipient:</span>
+                  <span className="text-gray-300 font-medium">
+                    {intervention.recipient}
                   </span>
                   <span className="text-gray-400">•</span>
                   <span className={`
                     ${intervention.was_acknowledged ? 'text-accent-success' : 'text-gray-500'}
                   `}>
-                    {intervention.was_acknowledged ? '✓ Acknowledged' : 'Pending'}
+                    {intervention.was_acknowledged ? '✓ Acknowledged' : '○ Pending'}
                   </span>
                 </div>
+
+                {/* Message - Visible for Level 3, collapsible for others */}
+                {(isLevel3 || isExpanded) && (
+                  <div className="mb-4">
+                    <div className="text-xs font-semibold text-gray-400 uppercase mb-2">
+                      Message Sent:
+                    </div>
+                    <div className={`bg-dark-bg rounded p-4 text-sm text-gray-300 border-l-2 relative`}
+                         style={{ borderLeftColor: colors.circle }}>
+                      <span className="absolute top-2 left-2 text-gray-600 text-2xl leading-none">"</span>
+                      <div className="pl-6 pr-6 italic">{intervention.message_sent}</div>
+                      <span className="absolute bottom-2 right-2 text-gray-600 text-2xl leading-none">"</span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Agent Reasoning (Expandable) */}
                 <div className="border-t border-dark-border pt-4 mt-4">
@@ -183,7 +221,7 @@ function ActionLog() {
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                    Agent Reasoning & Message
+                    {isExpanded ? 'Hide' : 'Show'} Agent Reasoning {!isLevel3 && !isExpanded && '& Message'}
                   </button>
 
                   {isExpanded && (
@@ -205,16 +243,6 @@ function ActionLog() {
                         </div>
                         <div className="text-sm text-gray-300">
                           {intervention.action_taken}
-                        </div>
-                      </div>
-
-                      {/* Message Sent */}
-                      <div>
-                        <div className="text-xs font-semibold text-gray-400 uppercase mb-2">
-                          Message Sent to {intervention.recipient}:
-                        </div>
-                        <div className="bg-dark-bg rounded p-4 text-sm text-gray-300 whitespace-pre-line">
-                          {intervention.message_sent}
                         </div>
                       </div>
 

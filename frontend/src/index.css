@@ -38,3 +38,128 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #3a3a4e;
 }
+
+/* Crisis Card Pulsing Animation */
+@keyframes crisis-pulse {
+  0%, 100% { 
+    border-color: rgba(231, 76, 60, 0.6); 
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.15); 
+  }
+  50% { 
+    border-color: rgba(231, 76, 60, 1); 
+    box-shadow: 0 0 12px 3px rgba(231, 76, 60, 0.2); 
+  }
+}
+
+.crisis-pulse {
+  animation: crisis-pulse 2s ease-in-out infinite;
+}
+
+/* Page Fade-in Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* Live Indicator Pulse */
+@keyframes live-pulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.5; 
+    transform: scale(1.3); 
+  }
+}
+
+.live-pulse {
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+
+/* Shimmer Animation for Cohort Banner */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-bg {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 165, 2, 0.05) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Gradient Shift for Login Background */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animated {
+  background: linear-gradient(
+    135deg,
+    #0f0f1a 0%,
+    #1a1a2e 25%,
+    #16213e 50%,
+    #1a1a2e 75%,
+    #0f0f1a 100%
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Counter Animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.count-up {
+  animation: countUp 0.8s ease-out;
+}
+
+/* Level 3 Emergency Pulse */
+@keyframes emergency-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px rgba(231, 76, 60, 0.4);
+  }
+}
+
+.emergency-pulse {
+  animation: emergency-pulse 2s ease-in-out infinite;
+}

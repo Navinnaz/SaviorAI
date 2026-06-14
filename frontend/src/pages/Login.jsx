@@ -20,12 +20,15 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg flex items-center justify-center px-4">
+    <div className="min-h-screen gradient-animated flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-accent-primary mb-2">SaviorAI</h1>
           <p className="text-gray-400">Student Mental Health Monitoring System</p>
+          <p className="text-accent-primary text-sm mt-2 font-medium">
+            Watches. Reasons. Acts. Autonomously.
+          </p>
         </div>
 
         {/* Login Card */}
@@ -75,9 +78,18 @@ function Login() {
             🎭 Demo Login (IIT Delhi)
           </button>
           
-          <p className="text-xs text-gray-500 text-center mt-4">
-            Demo login pre-fills the IIT Delhi demo institution with 50 sample students
-          </p>
+          {/* Stats chips */}
+          <div className="flex flex-wrap justify-center gap-3 mt-4">
+            <span className="text-xs text-gray-500 bg-dark-bg px-3 py-1 rounded-full">
+              🎓 50 Students Monitored
+            </span>
+            <span className="text-xs text-gray-500 bg-dark-bg px-3 py-1 rounded-full">
+              🤖 4 Autonomous Agents
+            </span>
+            <span className="text-xs text-gray-500 bg-dark-bg px-3 py-1 rounded-full">
+              ⚡ Real-time WhatsApp Integration
+            </span>
+          </div>
         </div>
 
         {/* Footer */}

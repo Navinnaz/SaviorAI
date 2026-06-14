@@ -87,6 +87,16 @@ class WhatsAppService:
             >>> service.send_message("+919876543210", "Hello from SaviorAI!")
             True
         """
+        # DEMO MODE: Simulate sending without using Twilio credits
+        DEMO_MODE = os.getenv('WHATSAPP_DEMO_MODE', 'false').lower() == 'true'
+        
+        if DEMO_MODE:
+            logger.info(f"[DEMO MODE] Simulating WhatsApp to {to_phone[:20]}...")
+            logger.info(f"[DEMO MODE] Message: {message[:100]}...")
+            print(f"\n✅ [DEMO] WhatsApp sent to {to_phone}")
+            print(f"📱 Message: {message[:150]}...\n")
+            return True
+        
         try:
             to_phone = self.format_phone(to_phone)
             

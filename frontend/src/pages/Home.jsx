@@ -3,10 +3,33 @@ import { getOverview, getHeatmap, getCohorts } from '../utils/api'
 import RiskHeatmap from '../components/RiskHeatmap'
 
 function StatCard({ label, value, color }) {
+  const [displayValue, setDisplayValue] = React.useState(0)
+  
+  React.useEffect(() => {
+    // Animate counter from 0 to value
+    const duration = 800
+    const steps = 30
+    const increment = value / steps
+    const stepDuration = duration / steps
+    
+    let current = 0
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= value) {
+        setDisplayValue(value)
+        clearInterval(timer)
+      } else {
+        setDisplayValue(Math.floor(current))
+      }
+    }, stepDuration)
+    
+    return () => clearInterval(timer)
+  }, [value])
+  
   return (
     <div className="bg-dark-card border border-dark-border rounded-lg p-6">
       <div className="text-sm text-gray-400 mb-2">{label}</div>
-      <div className={`text-3xl font-bold ${color}`}>{value}</div>
+      <div className={`text-3xl font-bold ${color} count-up`}>{displayValue}</div>
     </div>
   )
 }
@@ -15,8 +38,8 @@ function CohortAlertBanner({ alerts }) {
   if (!alerts || alerts.length === 0) return null
   
   return (
-    <div className="bg-accent-warning/10 border border-accent-warning/30 rounded-lg p-4 mb-6">
-      <div className="flex items-start">
+    <div className="bg-accent-warning/10 border border-accent-warning/30 rounded-lg p-4 mb-6 shimmer-bg relative overflow-hidden">
+      <div className="flex items-start relative z-10">
         <div className="flex-shrink-0">
           <svg className="h-6 w-6 text-accent-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -100,7 +123,7 @@ function Home() {
   const activeAlerts = cohorts.filter(c => c.active_alerts > 0)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-enter">
       {/* Cohort Alerts Banner */}
       {activeAlerts.length > 0 && (
         <CohortAlertBanner alerts={activeAlerts} />
@@ -139,11 +162,16 @@ function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <StatCard 
-            label="Check-in Rate (7d)" 
-            value={`${overview?.check_in_rate_7d?.toFixed(1) || 0}%`}
-            color="text-accent-primary"
-          />
+          <div className="bg-dark-card border border-dark-border rounded-lg p-6">
+            <div className="text-sm text-gray-400 mb-2">Check-in Rate (7d)</div>
+            <div className="text-3xl font-bold text-accent-primary">
+              {(() => {
+                const rate = overview?.check_in_rate_7d;
+                if (rate == null || isNaN(rate)) return '0.0%';
+                return `${rate.toFixed(1)}%`;
+              })()}
+            </div>
+          </div>
           <StatCard 
             label="Interventions Today" 
             value={overview?.interventions_today || 0}

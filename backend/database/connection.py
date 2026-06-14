@@ -24,10 +24,17 @@ if not DATABASE_URL:
 engine = create_async_engine(
     DATABASE_URL,
     echo=False,  # Disable SQL query logging for clean demo output
-    pool_size=10,
-    max_overflow=20,
+    pool_size=5,  # Reduced pool size for Railway free tier
+    max_overflow=10,
     pool_pre_ping=True,  # Verify connections before using
-    pool_recycle=3600,   # Recycle connections after 1 hour
+    pool_recycle=1800,   # Recycle connections after 30 min (Railway timeout)
+    connect_args={
+        "timeout": 10,  # 10 second connection timeout
+        "command_timeout": 10,  # 10 second command timeout
+        "server_settings": {
+            "application_name": "SaviorAI"
+        }
+    }
 )
 
 # Create async session factory

@@ -331,6 +331,24 @@ async def get_student_profile(
         "institution": student.institution.to_dict() if student.institution else None
     }
     
+    # Get latest burnout state for current risk score and state
+    latest_state_result = await db.execute(
+        select(models.BurnoutState)
+        .where(models.BurnoutState.student_id == stud_uuid)
+        .order_by(models.BurnoutState.assessed_at.desc())
+        .limit(1)
+    )
+    latest_state = latest_state_result.scalar_one_or_none()
+    
+    if latest_state:
+        # Calculate risk score (matching dashboard logic)
+        risk_score = min(100, int(latest_state.hmm_probability * 100) + (5 * latest_state.consecutive_low_days))
+        basic_info["risk_score"] = risk_score
+        basic_info["current_state"] = latest_state.state
+    else:
+        basic_info["risk_score"] = 0
+        basic_info["current_state"] = "stable"
+    
     # Last 14 days of check-ins
     checkins_14d_result = await db.execute(
         select(models.CheckIn).where(

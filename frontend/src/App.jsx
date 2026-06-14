@@ -45,7 +45,7 @@ function Navigation() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="h-2 w-2 bg-accent-success rounded-full"></div>
+            <div className="h-2 w-2 bg-accent-success rounded-full live-pulse"></div>
             <span className="text-sm text-gray-400">Live</span>
             <button
               onClick={handleLogout}

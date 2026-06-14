@@ -221,6 +221,11 @@ class DemoRunner:
             print("⏳ Waiting 3 seconds...\n")
             await asyncio.sleep(3)
             
+            # NEW Event 1b: Second crisis student for L3 demo
+            await self._event_1b_second_crisis(db)
+            print("⏳ Waiting 3 seconds...\n")
+            await asyncio.sleep(3)
+            
             # Event 2: Gaming detection
             await self._event_2_gaming_detection(db)
             print("⏳ Waiting 3 seconds...\n")
@@ -231,18 +236,25 @@ class DemoRunner:
             print("⏳ Waiting 3 seconds...\n")
             await asyncio.sleep(3)
             
+            # NEW Event 3b: L4 Institutional alert
+            await self._event_3b_institutional_alert(db)
+            print("⏳ Waiting 3 seconds...\n")
+            await asyncio.sleep(3)
+            
             # Event 4: Action log summary
             await self._event_4_action_log(db)
         
         print("\n" + "="*70)
-        print("✅ LIVE DEMO COMPLETE — 4 Autonomous Decisions Made")
+        print("✅ LIVE DEMO COMPLETE — 6 Autonomous Decisions Made")
         print("="*70)
         print("\n🎯 View results:")
         print(f"   • Dashboard: http://localhost:5173/")
         print(f"   • Action log: http://localhost:5173/action-log")
-        print(f"\n📧 Check your email for Level 3 emergency alert")
-        print(f"   Email sent to: {os.getenv('DEMO_COUNSELLOR_EMAIL', 'Not configured')}\n")
-        print("💡 To run again for judges:")
+        print(f"\n📊 Interventions Generated:")
+        print(f"   • L3 Emergency: 2 students (Priya + second crisis)")
+        print(f"   • L4 Institutional: 1 alert (if thresholds met)")
+        print(f"   • Plus gaming detection & cohort anomaly")
+        print(f"\n💡 To run again for judges:")
         print("   1. python -m backend.utils.demo_runner --scenario reset")
         print("   2. python -m backend.utils.demo_runner --scenario setup")
         print("   3. python -m backend.utils.demo_runner --scenario live\n")
@@ -439,6 +451,167 @@ class DemoRunner:
         
         print("✅ EVENT 1 COMPLETE\n")
     
+    async def _event_1b_second_crisis(self, db):
+        """NEW Event 1b: AT-RISK student sends "1 no exhausted" → transitions to CRISIS (red card)."""
+        print("\n" + "="*70)
+        print("⏱️  EVENT 1b: AT-RISK STUDENT → CRISIS TRANSITION (L3 DEMO)")
+        print("="*70 + "\n")
+        
+        # Find a student who is already AT-RISK from setup (not Priya, not stable)
+        from sqlalchemy import select
+        result = await db.execute(
+            select(Student)
+            .join(BurnoutState)
+            .where(Student.institution_id == self.institution_id)
+            .where(Student.name != "Priya Sharma")
+            .where(BurnoutState.state == "at_risk")
+            .order_by(BurnoutState.consecutive_low_days.desc())
+            .limit(1)
+        )
+        at_risk_student = result.scalar_one_or_none()
+        
+        if not at_risk_student:
+            print("   ⚠️  No AT-RISK students found in setup data")
+            print("   Looking for any non-Priya student with low baseline...\n")
+            # Fallback: find any student with baseline < 3.5
+            result = await db.execute(
+                select(Student)
+                .where(Student.institution_id == self.institution_id)
+                .where(Student.name != "Priya Sharma")
+                .where(Student.baseline_score < 3.5)
+                .limit(1)
+            )
+            at_risk_student = result.scalar_one_or_none()
+        
+        if not at_risk_student:
+            print("❌ No suitable student found for crisis transition")
+            return
+        
+        print(f"📱 Student: {at_risk_student.name} (currently AT-RISK)")
+        print(f"   Phone: {at_risk_student.phone}")
+        print(f"   Baseline: {at_risk_student.baseline_score:.1f}")
+        print(f"   Sending: '1 no exhausted' (sentinel word)\n")
+        
+        # Get current history
+        current_scores = await crud.get_recent_scores(db, at_risk_student.id, days=15)
+        current_state = await db.execute(
+            select(BurnoutState)
+            .where(BurnoutState.student_id == at_risk_student.id)
+            .order_by(BurnoutState.assessed_at.desc())
+            .limit(1)
+        )
+        last_state = current_state.scalar_one_or_none()
+        
+        if last_state:
+            print(f"   📊 Current state: {last_state.state.upper()}")
+            print(f"      Consecutive low days: {last_state.consecutive_low_days}")
+            print(f"      Score history: {current_scores[-7:]}\n")
+        
+        # Parse message
+        mood_score = 1
+        ate_properly = "no"
+        one_word = "exhausted"
+        
+        # Sentiment analysis
+        print("   🔍 Running sentiment analysis...")
+        sentiment_result = analyze_sentiment(one_word)
+        sentiment = sentiment_result["sentiment"]
+        sentiment_score = sentiment_result["score"]
+        print(f"      Sentiment: {sentiment} (score: {sentiment_score:.2f})")
+        print(f"      Sentinel word 'exhausted' detected → HIGH PRIORITY\n")
+        
+        # Save check-in
+        checkin_data = {
+            "id": uuid4(),
+            "student_id": at_risk_student.id,
+            "checked_in_at": datetime.now(datetime.UTC) if hasattr(datetime, 'UTC') else datetime.utcnow(),
+            "mood_score": mood_score,
+            "ate_properly": ate_properly,
+            "one_word": one_word,
+            "sentiment": sentiment,
+            "sentiment_score": sentiment_score,
+            "raw_message": "1 no exhausted",
+            "skipped": False
+        }
+        
+        checkin = await crud.save_checkin(db, checkin_data)
+        await db.commit()
+        print(f"   ✅ Check-in saved: {checkin.id}")
+        
+        # Get updated scores
+        updated_scores = await crud.get_recent_scores(db, at_risk_student.id, days=15)
+        onewords = await crud.get_recent_onewords(db, at_risk_student.id, days=8)
+        
+        print(f"\n   📊 Updated score history: {updated_scores[-10:]}")
+        
+        # Run HMM (should naturally transition to crisis with more low days)
+        print("\n   🧠 Running HMM assessment...")
+        assessment = self.hmm.assess(updated_scores, baseline=at_risk_student.baseline_score or 3.5)
+        print(f"      State: {assessment.state.upper()}")
+        print(f"      Probability: {assessment.probability*100:.1f}%")
+        print(f"      Consecutive low days: {assessment.consecutive_low_days}")
+        print(f"      Trend: {assessment.trend_score:+.2f}")
+        
+        # Validation
+        validation = self.validator.validate(updated_scores)
+        
+        # Save state
+        await crud.save_burnout_state(db, at_risk_student.id, assessment, validation)
+        await db.commit()
+        print(f"      ✅ State saved: {assessment.state.upper()}")
+        
+        # Run intervention (natural logic - should be L3 if crisis)
+        if self.orchestrator:
+            print("\n   🚨 Running intervention orchestrator...")
+            
+            last_intervention = await crud.get_last_intervention(db, at_risk_student.id)
+            
+            decision = await self.orchestrator.decide_and_act(
+                student=at_risk_student.to_dict(),
+                assessment=assessment,
+                recent_scores=updated_scores,
+                recent_onewords=onewords,
+                validation_result=validation,
+                last_intervention=last_intervention.to_dict() if last_intervention else None
+            )
+            
+            if decision["action"] == "send":
+                print(f"      🎯 Action: SEND L{decision['level']}")
+                print(f"      👤 Recipient: {decision['recipient']}")
+                print(f"      📨 Level: {'EMERGENCY' if decision['level']==3 else 'Counsellor' if decision['level']==2 else 'Peer Nudge'}")
+                
+                # Save intervention
+                intervention_data = {
+                    "student_id": at_risk_student.id,
+                    "level": decision["level"],
+                    "trigger_reason": decision["reasoning"],
+                    "action_taken": "emergency_escalation" if decision['level'] == 3 else "send",
+                    "message_sent": decision["message"],
+                    "recipient": decision["recipient"],
+                    "was_acknowledged": False,
+                    "outcome": "pending"
+                }
+                await crud.save_intervention(db, intervention_data)
+                await db.commit()
+                print(f"      ✅ L{decision['level']} intervention saved to database")
+        
+        print("\n" + "="*70)
+        print(f"EVENT 1b: {at_risk_student.name} AT-RISK → CRISIS")
+        print("─"*70)
+        print(f"Student: {at_risk_student.name} ({at_risk_student.batch})")
+        print(f"Progression: AT-RISK → CRISIS (natural HMM transition)")
+        print(f"Trigger: Sentinel word 'exhausted' + multiple low consecutive days")
+        print(f"State: {assessment.state.upper()} ({assessment.probability*100:.0f}% confidence)")
+        print(f"Consecutive low days: {assessment.consecutive_low_days}")
+        if decision and decision.get("action") == "send":
+            print(f"Intervention: Level {decision['level']} — {'EMERGENCY' if decision['level']==3 else 'Counsellor' if decision['level']==2 else 'Peer Nudge'}")
+        print("─"*70)
+        print(f"→ Dashboard: {at_risk_student.name}'s card should be RED + PULSING")
+        print(f"→ Action Log: L{decision.get('level', '?')} with red border (if L3)")
+        print("="*70 + "\n")
+        
+        print("✅ EVENT 1b COMPLETE\n")
+    
     async def _event_2_gaming_detection(self, db):
         """Event 2: Gaming student sends "4 yes good" (14th perfect day)."""
         print("\n" + "="*70)
@@ -595,6 +768,155 @@ class DemoRunner:
             print(f"      Batch wellbeing within normal variance\n")
         
         print("✅ EVENT 3 COMPLETE\n")
+    
+    async def _event_3b_institutional_alert(self, db):
+        """NEW Event 3b: Generate L4 institutional-level alert."""
+        print("\n" + "="*70)
+        print("⏱️  EVENT 3b: INSTITUTIONAL ALERT (L4 ESCALATION)")
+        print("="*70 + "\n")
+        
+        print("🏛️  Triggering institutional-level intervention (L4)...")
+        print("   Context: Multiple crisis students + cohort anomaly detected\n")
+        
+        # Count crisis students
+        from sqlalchemy import select, func
+        result = await db.execute(
+            select(func.count(BurnoutState.id))
+            .join(Student)
+            .where(Student.institution_id == self.institution_id)
+            .where(BurnoutState.state == "crisis")
+            .where(BurnoutState.assessed_at >= datetime.now() - timedelta(days=1))
+        )
+        crisis_count = result.scalar() or 0
+        
+        # Count cohort alerts
+        result = await db.execute(
+            select(func.count(CohortAlert.id))
+            .where(CohortAlert.institution_id == self.institution_id)
+            .where(CohortAlert.acknowledged == False)
+        )
+        alert_count = result.scalar() or 0
+        
+        print(f"   📊 Current institution status:")
+        print(f"      • Crisis students (24h): {crisis_count}")
+        print(f"      • Active cohort alerts: {alert_count}")
+        print(f"      • Threshold for L4: ≥2 crisis OR ≥1 cohort alert")
+        
+        # Create L4 intervention
+        if crisis_count >= 2 or alert_count >= 1:
+            print(f"\n   🚨 THRESHOLD EXCEEDED → Triggering L4")
+            
+            # Get a representative student (any crisis student)
+            result = await db.execute(
+                select(Student)
+                .join(BurnoutState)
+                .where(Student.institution_id == self.institution_id)
+                .where(BurnoutState.state == "crisis")
+                .limit(1)
+            )
+            student = result.scalar_one_or_none()
+            
+            if not student:
+                # Fallback: use any student
+                result = await db.execute(
+                    select(Student)
+                    .where(Student.institution_id == self.institution_id)
+                    .limit(1)
+                )
+                student = result.scalar_one_or_none()
+            
+            if student:
+                # Generate L4 institutional message
+                institutional_message = f"""
+INSTITUTIONAL MENTAL HEALTH ALERT - IMMEDIATE ACTION REQUIRED
+
+Institution: IIT Delhi Demo Campus
+Alert Level: LEVEL 4 (Institutional Escalation)
+Trigger Date: {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}
+
+SITUATION OVERVIEW:
+- {crisis_count} students currently in CRISIS state (last 24 hours)
+- {alert_count} active cohort anomaly alert(s) detected
+- Pattern indicates systemic stressor affecting multiple students
+
+AFFECTED COHORTS:
+- MECH-2023: Batch-level anomaly detected (exam stress)
+- Individual crisis cases across multiple batches
+
+RECOMMENDED INSTITUTIONAL ACTIONS:
+1. IMMEDIATE: Convene emergency student welfare committee meeting
+2. URGENT: Deploy counseling resources to affected batches
+3. SHORT-TERM: Review current academic calendar and workload distribution
+4. MEDIUM-TERM: Implement stress management workshops for at-risk cohorts
+5. LONG-TERM: Evaluate institutional support systems and accessibility
+
+AUTONOMOUS SYSTEM ACTIONS TAKEN:
+- Level 3 emergency interventions dispatched to crisis students
+- Counselor alerts sent for at-risk individuals
+- Cohort-level reports generated for affected batches
+- This institutional alert escalated to administration
+
+NEXT STEPS FOR ADMINISTRATION:
+- Review individual student cases in Action Log
+- Coordinate with academic departments on workload
+- Mobilize additional counseling staff if needed
+- Consider temporary academic accommodations
+
+DASHBOARD ACCESS: http://localhost:5173/action-log
+ESCALATION CHAIN: Dean of Students → Principal → Board
+
+This alert was generated autonomously by SaviorAI based on real-time 
+student mental health data analysis. Human review and action required.
+                """
+                
+                intervention_data = {
+                    "student_id": student.id,  # Representative student
+                    "level": 4,
+                    "trigger_reason": (
+                        f"Institutional threshold exceeded: {crisis_count} crisis students "
+                        f"and {alert_count} cohort anomaly(ies) detected in last 24 hours. "
+                        f"Pattern indicates systemic stressor requiring institutional response."
+                    ),
+                    "action_taken": "institutional_alert_sent",
+                    "message_sent": institutional_message.strip(),
+                    "recipient": "principal",
+                    "was_acknowledged": False,
+                    "outcome": "pending"
+                }
+                
+                await crud.save_intervention(db, intervention_data)
+                await db.commit()
+                
+                print(f"      ✅ L4 Institutional Alert Created")
+                print(f"      👤 Recipient: Principal/Dean of Students")
+                print(f"      📊 Trigger: {crisis_count} crisis + {alert_count} cohort alert(s)")
+                
+                print("\n" + "="*70)
+                print("EVENT 3b: Institutional-Level Alert (L4)")
+                print("─"*70)
+                print(f"Level: 4 (INSTITUTIONAL ESCALATION)")
+                print(f"Scope: Entire institution")
+                print(f"Crisis Students: {crisis_count}")
+                print(f"Cohort Alerts: {alert_count}")
+                print(f"Recipient: Principal, Dean of Students, Student Welfare Committee")
+                print(f"")
+                print(f"Recommendation:")
+                print(f"• Emergency welfare committee meeting")
+                print(f"• Review academic calendar and exam schedule")
+                print(f"• Deploy additional counseling resources")
+                print(f"• Implement institution-wide stress management")
+                print("─"*70)
+                print(f"→ Action Log: L4 entry (purple badge) with institutional scope")
+                print(f"→ Dashboard: Institutional alert banner visible")
+                print("="*70 + "\n")
+            else:
+                print("   ⚠️  No students found for L4 trigger")
+        else:
+            print(f"\n   ℹ️  Threshold not met (need ≥2 crisis or ≥1 cohort alert)")
+            print(f"      Current: {crisis_count} crisis, {alert_count} cohort")
+            print(f"      Skipping L4 generation")
+        
+        print("✅ EVENT 3b COMPLETE\n")
     
     async def _event_4_action_log(self, db):
         """Event 4: Display action log summary."""

@@ -3,8 +3,14 @@ import { useNavigate } from 'react-router-dom'
 
 const stateColors = {
   stable: 'bg-accent-success/20 border-accent-success/50 text-accent-success',
-  at_risk: 'bg-accent-warning/20 border-accent-warning/50 text-accent-warning',
+  at_risk: 'bg-[#E67E22]/20 border-[#E67E22]/50 text-[#E67E22]', // Warmer amber
   crisis: 'bg-accent-danger/20 border-accent-danger/50 text-accent-danger'
+}
+
+const stateBorderAccent = {
+  stable: 'border-l-accent-success',
+  at_risk: 'border-l-[#E67E22]',
+  crisis: 'border-l-accent-danger'
 }
 
 const stateLabels = {
@@ -24,6 +30,8 @@ function StudentCard({ student }) {
   const [isHovered, setIsHovered] = useState(false)
   
   const colorClass = stateColors[student.state] || stateColors.stable
+  const borderAccent = stateBorderAccent[student.state] || stateBorderAccent.stable
+  const isCrisis = student.state === 'crisis'
   
   const handleClick = () => {
     navigate(`/student/${student.student_id}`)
@@ -48,20 +56,28 @@ function StudentCard({ student }) {
   return (
     <div
       className={`
-        ${colorClass} border rounded-lg p-4 cursor-pointer transition-all
-        hover:scale-105 hover:shadow-lg relative
+        ${colorClass} ${borderAccent} border border-l-[3px] rounded-lg p-4 cursor-pointer transition-all min-h-[100px] relative
+        hover:transform hover:-translate-y-0.5 hover:shadow-lg
+        ${isCrisis ? 'crisis-pulse' : ''}
       `}
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Risk Score Badge */}
-      <div className="absolute top-2 right-2 text-xs font-bold opacity-50">
+      {/* Crisis Badge */}
+      {isCrisis && (
+        <div className="absolute top-2 left-2 px-2 py-0.5 bg-accent-danger text-white text-[10px] font-bold uppercase rounded">
+          CRISIS
+        </div>
+      )}
+      
+      {/* Risk Score Badge - Large for Crisis */}
+      <div className={`absolute top-2 right-2 font-bold ${isCrisis ? 'text-2xl text-accent-danger' : 'text-xs opacity-50'}`}>
         {student.risk_score}
       </div>
       
       {/* Student Info */}
-      <div className="mb-2">
+      <div className={`mb-2 ${isCrisis ? 'mt-6' : ''}`}>
         <div className="font-semibold text-white truncate">{student.name}</div>
         <div className="text-xs opacity-70">{student.batch}</div>
       </div>
