@@ -1,5 +1,5 @@
 @echo off
-REM GuardianAI Demo Runner - Windows Batch Script
+REM SaviorAI Demo Runner - Windows Batch Script
 
 REM Check if virtual environment exists
 if not exist "venv\Scripts\activate.bat" (

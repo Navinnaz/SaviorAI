@@ -1,5 +1,5 @@
 """
-GuardianAI - Intervention Orchestrator Test Suite
+SaviorAI - Intervention Orchestrator Test Suite
 
 Tests for autonomous intervention decision-making and message generation.
 Validates level selection, retry logic, fallback templates, and decision logging.
@@ -416,7 +416,7 @@ def test_adversarial_override():
 def run_all_tests():
     """Run all tests"""
     print("\n" + "="*70)
-    print(" "*10 + "GuardianAI Intervention Orchestrator Test Suite")
+    print(" "*10 + "SaviorAI Intervention Orchestrator Test Suite")
     print("="*70)
     
     tests = [
@@ -467,3 +467,4 @@ if __name__ == "__main__":
     
     success = run_all_tests()
     sys.exit(0 if success else 1)
+

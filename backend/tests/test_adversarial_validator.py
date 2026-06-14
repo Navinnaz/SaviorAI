@@ -1,5 +1,5 @@
 """
-GuardianAI - Adversarial Validator Test Suite
+SaviorAI - Adversarial Validator Test Suite
 
 Tests for gaming/masking detection in student check-ins.
 Validates that the system can detect suspicious patterns.
@@ -308,7 +308,7 @@ def test_variance_calculation():
 def run_all_tests():
     """Run all tests"""
     print("\n" + "="*70)
-    print(" "*10 + "GuardianAI Adversarial Validator Test Suite")
+    print(" "*10 + "SaviorAI Adversarial Validator Test Suite")
     print("="*70)
     
     tests = [
@@ -357,3 +357,4 @@ if __name__ == "__main__":
     
     success = run_all_tests()
     sys.exit(0 if success else 1)
+

@@ -17,7 +17,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/serviceWorker.js', { scope: '/' })
       .then(registration => {
-        console.log('✅ GuardianAI Service Worker registered:', registration.scope)
+        console.log('✅ SaviorAI Service Worker registered:', registration.scope)
       })
       .catch(error => {
         console.error('❌ Service Worker registration failed:', error)
@@ -30,3 +30,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
+

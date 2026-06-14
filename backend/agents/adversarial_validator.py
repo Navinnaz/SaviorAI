@@ -1,5 +1,5 @@
 """
-GuardianAI - Adversarial Check-in Validator
+SaviorAI - Adversarial Check-in Validator
 
 Detects students gaming the check-in system.
 
@@ -183,3 +183,4 @@ class AdversarialValidator:
             else:
                 current_streak = 1
         return max_streak
+

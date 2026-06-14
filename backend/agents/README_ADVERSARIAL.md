@@ -1,8 +1,8 @@
-# GuardianAI - Adversarial Validator
+# SaviorAI - Adversarial Validator
 
 ## Overview
 
-The Adversarial Validator is GuardianAI's gaming detection system. It identifies students who are deliberately providing false check-in data to avoid detection or intervention.
+The Adversarial Validator is SaviorAI's gaming detection system. It identifies students who are deliberately providing false check-in data to avoid detection or intervention.
 
 **Key Insight:** Real emotional states have natural variance. A student reporting exactly 4/5 every day for 14 days is statistically improbable — and itself a concerning signal.
 
@@ -17,7 +17,7 @@ Students in distress often:
 
 Traditional mental health apps don't catch this. They take scores at face value.
 
-**GuardianAI doesn't.** If you're gaming the system, that itself is a signal of distress.
+**SaviorAI doesn't.** If you're gaming the system, that itself is a signal of distress.
 
 ## Four Detection Mechanisms
 
@@ -243,7 +243,7 @@ SUDDEN_RECOVERY_THRESHOLD = 2.0  # Score jump size
 - No gaming detection
 - Easy to evade
 
-**GuardianAI:**
+**SaviorAI:**
 - Treats gaming as a signal
 - Multiple detection mechanisms
 - Adapts intervention strategy
@@ -271,3 +271,4 @@ After Adversarial Validator:
 - Response validity research
 - Time-series anomaly detection
 - Statistical process control methods
+

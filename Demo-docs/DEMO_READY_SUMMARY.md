@@ -1,4 +1,4 @@
-# 🎯 GuardianAI Demo - Ready to Present!
+# 🎯 SaviorAI Demo - Ready to Present!
 
 ## ✅ All Issues Fixed
 
@@ -88,7 +88,7 @@ python add_my_number.py
 
 ### Part 1: Overview (2 min)
 **Show Dashboard:**
-- "This is GuardianAI - autonomous mental health monitoring for 50 students"
+- "This is SaviorAI - autonomous mental health monitoring for 50 students"
 - "Three-layer AI system: HMM state detection, adversarial gaming validator, cohort pattern detector"
 - "All running autonomously, 24/7, no human intervention needed"
 
@@ -303,7 +303,7 @@ location.reload()
 ### Important IDs:
 - **Institution**: `88353031-000c-4b80-b091-89fe65849734`
 - **Your Phone**: `+919944906759`
-- **API Key**: `guardianai_dev_key_2024`
+- **API Key**: `SaviorAI_dev_key_2024`
 
 ### Ports:
 - **Backend**: http://localhost:8000
@@ -326,3 +326,4 @@ Examples: "5 yes happy" or "1 no empty"
 - `--scenario reset` - Wipe database
 - `--scenario setup` - Add 50 students + 14 days history
 - `--scenario live` - Simulate 4 real-time events
+

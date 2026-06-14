@@ -1,5 +1,5 @@
 {
-  "name": "guardianai-dashboard",
+  "name": "SaviorAI-dashboard",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -24,3 +24,4 @@
     "vite": "^5.0.8"
   }
 }
+

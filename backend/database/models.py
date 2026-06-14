@@ -1,5 +1,5 @@
 """
-GuardianAI SQLAlchemy Models
+SaviorAI SQLAlchemy Models
 Maps to PostgreSQL schema defined in Section 3
 """
 
@@ -16,7 +16,7 @@ from .connection import Base
 
 
 class Institution(Base):
-    """Institutions using GuardianAI"""
+    """Institutions using SaviorAI"""
     __tablename__ = "institutions"
     
     id = Column(SQLAlchemyUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -244,3 +244,4 @@ class CohortAlert(Base):
             "institutional_action_recommended": self.institutional_action_recommended,
             "acknowledged": self.acknowledged
         }
+

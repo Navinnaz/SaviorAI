@@ -1,5 +1,5 @@
 """
-GuardianAI - HMM Engine Test Runner (No pytest required)
+SaviorAI - HMM Engine Test Runner (No pytest required)
 
 Standalone test runner for the HMM engine.
 Run with: python backend/tests/run_hmm_tests.py
@@ -225,7 +225,7 @@ def test_baseline_sensitivity():
 def run_all_tests():
     """Run all tests"""
     print("\n" + "="*70)
-    print(" "*15 + "GuardianAI HMM Engine Test Suite")
+    print(" "*15 + "SaviorAI HMM Engine Test Suite")
     print("="*70)
     
     tests = [
@@ -268,3 +268,4 @@ def run_all_tests():
 if __name__ == "__main__":
     success = run_all_tests()
     sys.exit(0 if success else 1)
+

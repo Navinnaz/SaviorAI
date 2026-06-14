@@ -1,5 +1,5 @@
 /**
- * GuardianAI Service Worker
+ * SaviorAI Service Worker
  * 
  * Features:
  * - Cache app shell for offline access
@@ -7,7 +7,7 @@
  * - Register push notifications
  */
 
-const CACHE_NAME = 'guardianai-v1'
+const CACHE_NAME = 'SaviorAI-v1'
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -48,11 +48,11 @@ self.addEventListener('activate', (event) => {
   
   // Show installation notification (only if permission granted)
   if (Notification.permission === 'granted') {
-    self.registration.showNotification('GuardianAI', {
-      body: 'GuardianAI is watching 👁️\nStudent mental health monitoring active.',
+    self.registration.showNotification('SaviorAI', {
+      body: 'SaviorAI is watching 👁️\nStudent mental health monitoring active.',
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-72x72.png',
-      tag: 'guardianai-installed',
+      tag: 'SaviorAI-installed',
       requireInteraction: false
     }).catch(err => console.log('Notification error:', err))
   } else {
@@ -92,12 +92,12 @@ self.addEventListener('push', (event) => {
   console.log('[ServiceWorker] Push notification received')
   
   const data = event.data ? event.data.json() : {}
-  const title = data.title || 'GuardianAI Alert'
+  const title = data.title || 'SaviorAI Alert'
   const options = {
     body: data.body || 'New update available',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
-    tag: data.tag || 'guardianai-alert',
+    tag: data.tag || 'SaviorAI-alert',
     data: data.url || '/',
     requireInteraction: data.urgent || false
   }
@@ -133,3 +133,4 @@ self.addEventListener('notificationclick', (event) => {
 })
 
 console.log('[ServiceWorker] Loaded')
+

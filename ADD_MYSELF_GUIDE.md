@@ -1,4 +1,4 @@
-# Adding Yourself to GuardianAI for Live WhatsApp Demo
+# Adding Yourself to SaviorAI for Live WhatsApp Demo
 
 ## Quick Steps
 
@@ -126,7 +126,7 @@ This shows all your check-ins with sentiments and HMM states.
 ### During Presentation:
 
 **Part 1: Show Existing Data (5 min)**
-- "Here's our GuardianAI dashboard monitoring 50 students"
+- "Here's our SaviorAI dashboard monitoring 50 students"
 - Show risk heatmap with Priya Sharma at top (crisis state)
 - Click Priya's card → show her profile with timeline
 - "She's scored 1-2 for 9 consecutive days, trend declining -2.4"
@@ -270,3 +270,4 @@ With these fixes:
 - ✅ Full autonomous agent pipeline working
 
 **Break a leg with your presentation! 🚀**
+

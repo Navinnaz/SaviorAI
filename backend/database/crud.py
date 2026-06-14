@@ -1,5 +1,5 @@
 """
-GuardianAI Database CRUD Operations
+SaviorAI Database CRUD Operations
 Async database operations for all models using SQLAlchemy 2.0
 """
 
@@ -450,3 +450,4 @@ async def get_institution_statistics(
         "at_risk": state_counts["at_risk"],
         "crisis": state_counts["crisis"]
     }
+

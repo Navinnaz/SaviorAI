@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getRecentInterventions } from '../utils/api'
 
@@ -68,7 +68,7 @@ function ActionLog() {
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Autonomous Action Log</h1>
           <p className="text-gray-400">
-            Complete audit trail of all autonomous interventions taken by GuardianAI
+            Complete audit trail of all autonomous interventions taken by SaviorAI
           </p>
         </div>
       </div>
@@ -242,7 +242,7 @@ function ActionLog() {
       {/* Info Box for Judges */}
       <div className="bg-accent-primary/10 border border-accent-primary/30 rounded-lg p-6">
         <h3 className="text-accent-primary font-semibold mb-2">
-          📋 For Hackathon Judges
+          📋 Note
         </h3>
         <p className="text-sm text-gray-300 leading-relaxed">
           This Action Log demonstrates <strong>full autonomous behavior</strong>. Each entry shows:
@@ -251,7 +251,7 @@ function ActionLog() {
           <br />• The actual message content sent to students/counsellors
           <br />• Complete audit trail with timestamps and outcomes
           <br /><br />
-          <strong>Expand any entry</strong> to see the full AI reasoning chain. This proves GuardianAI 
+          <strong>Expand any entry</strong> to see the full AI reasoning chain. This proves SaviorAI 
           operates autonomously while maintaining complete transparency and human oversight capability.
         </p>
       </div>
@@ -260,3 +260,4 @@ function ActionLog() {
 }
 
 export default ActionLog
+

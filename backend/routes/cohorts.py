@@ -1,5 +1,5 @@
 """
-GuardianAI - Cohorts API Routes
+SaviorAI - Cohorts API Routes
 Batch-level analytics and cohort anomaly detection
 """
 
@@ -84,3 +84,4 @@ async def get_batch_analytics(
             for batch, students_in_batch in batches.items()
         ]
     }
+

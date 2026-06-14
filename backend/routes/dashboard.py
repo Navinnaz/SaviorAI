@@ -1,5 +1,5 @@
 """
-GuardianAI Dashboard API
+SaviorAI Dashboard API
 
 Provides analytics and monitoring endpoints for institutions
 to visualize student mental health data and intervention effectiveness.
@@ -42,7 +42,7 @@ def verify_api_key(x_api_key: str = Header(...)) -> str:
     Raises:
         HTTPException: If API key is invalid or missing
     """
-    valid_api_key = os.getenv("DASHBOARD_API_KEY", "guardianai_dev_key_2024")
+    valid_api_key = os.getenv("DASHBOARD_API_KEY", "SaviorAI_dev_key_2024")
     
     if not x_api_key:
         raise HTTPException(
@@ -444,7 +444,7 @@ async def get_cohorts_analytics(
         - Total students
         - Average mood score (7-day)
         - Risk distribution
-        - Active alerts
+        - Active alerts with affected students details
     
     Example:
         GET /dashboard/123e4567-e89b-12d3-a456-426614174000/cohorts
@@ -512,19 +512,19 @@ async def get_cohorts_analytics(
         scores = [s for s in scores_result.scalars().all() if s is not None]
         avg_mood_7d = (sum(scores) / len(scores)) if scores else 0.0
         
-        # Count active alerts for this batch
+        # Get active alert details for this batch (not just count)
         alerts_result = await db.execute(
-            select(func.count(models.CohortAlert.id)).where(
+            select(models.CohortAlert).where(
                 and_(
                     models.CohortAlert.institution_id == inst_uuid,
                     models.CohortAlert.batch == batch_name,
                     models.CohortAlert.acknowledged == False
                 )
-            )
+            ).order_by(models.CohortAlert.detected_at.desc()).limit(1)
         )
-        active_alerts = alerts_result.scalar() or 0
+        latest_alert = alerts_result.scalar_one_or_none()
         
-        cohorts_data.append({
+        cohort_data = {
             "batch": batch_name,
             "total_students": len(batch_students),
             "avg_mood_7d": round(avg_mood_7d, 2),
@@ -533,8 +533,17 @@ async def get_cohorts_analytics(
                 "at_risk": at_risk,
                 "crisis": crisis
             },
-            "active_alerts": active_alerts
-        })
+            "active_alerts": 1 if latest_alert else 0
+        }
+        
+        # Add alert details if there's an active alert
+        if latest_alert:
+            cohort_data["affected_students"] = latest_alert.affected_students
+            cohort_data["affected_percentage"] = round(latest_alert.affected_percentage, 1)
+            cohort_data["avg_score_drop"] = round(latest_alert.avg_score_drop, 2)
+            cohort_data["detected_at"] = latest_alert.detected_at.isoformat()
+        
+        cohorts_data.append(cohort_data)
     
     return cohorts_data
 
@@ -627,7 +636,8 @@ async def dashboard_health_check() -> Dict[str, str]:
     """
     return {
         "status": "healthy",
-        "service": "guardianai-dashboard",
+        "service": "SaviorAI-dashboard",
         "version": "1.0.0",
         "timestamp": datetime.utcnow().isoformat()
     }
+

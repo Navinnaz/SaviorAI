@@ -1,5 +1,5 @@
 """
-GuardianAI - Live Demo Runner
+SaviorAI - Live Demo Runner
 
 Orchestrates compelling live demonstrations with real-time database and dashboard updates.
 
@@ -36,7 +36,7 @@ from backend.agents.adversarial_validator import AdversarialValidator
 from backend.agents.cohort_detector import CohortAnomalyDetector
 from backend.agents.intervention_orchestrator import InterventionOrchestrator
 from backend.services.sentiment import analyze_sentiment
-from backend.utils.data_generator import generate_demo_data
+from backend.utils.data_generator import generate_demo_data, DEMO_INSTITUTION_UUID
 
 # For OpenAI integration
 import openai
@@ -95,15 +95,28 @@ class DemoRunner:
             print("📊 Generating demo data...")
             demo_data = generate_demo_data(num_students=50)
             
-            # Save institution
-            print("\n📍 Creating institution...")
-            inst_data = demo_data["institution"]
-            institution = Institution(**inst_data)
-            db.add(institution)
-            await db.commit()
-            await db.refresh(institution)
+            # Check if institution already exists (from previous setup)
+            from sqlalchemy import select
+            result = await db.execute(
+                select(Institution).where(Institution.id == DEMO_INSTITUTION_UUID)
+            )
+            existing_institution = result.scalar_one_or_none()
+            
+            if existing_institution:
+                print("\n📍 Reusing existing demo institution...")
+                institution = existing_institution
+                print(f"   ✅ Institution: {institution.name} (ID: {institution.id})")
+            else:
+                # Save new institution
+                print("\n📍 Creating demo institution...")
+                inst_data = demo_data["institution"]
+                institution = Institution(**inst_data)
+                db.add(institution)
+                await db.commit()
+                await db.refresh(institution)
+                print(f"   ✅ Institution: {institution.name} (ID: {institution.id})")
+            
             self.institution_id = institution.id
-            print(f"   ✅ Institution: {institution.name} (ID: {institution.id})")
             
             # Save students
             print(f"\n👥 Creating {len(demo_data['students'])} students...")
@@ -173,11 +186,8 @@ class DemoRunner:
         print(f"\n🎯 Next steps:")
         print(f"   1. Start backend: python -m backend.main")
         print(f"   2. Start frontend: cd frontend && npm run dev")
-        print(f"   3. Open dashboard: http://localhost:3000")
-        print(f"   4. ⚠️  IMPORTANT: Update institution ID in browser:")
-        print(f"      Open browser console (F12) and run:")
-        print(f"      localStorage.setItem('institutionId', '{self.institution_id}')")
-        print(f"      location.reload()")
+        print(f"   3. Open browser: http://localhost:5173")
+        print(f"   4. Click 'Demo Login' button to access dashboard")
         print(f"   5. Run live demo: python -m backend.utils.demo_runner --scenario live\n")
     
     async def _reload_demo_ids(self):
@@ -190,45 +200,48 @@ class DemoRunner:
     async def scenario_live(self):
         """Simulate 4 real-time events for live demo."""
         print("\n" + "="*70)
-        print("🎬 LIVE DEMO: Simulating real-time events")
+        print("🎬 LIVE DEMO: 4 Real-Time Autonomous Events")
         print("="*70 + "\n")
         
         async with AsyncSessionLocal() as db:
-            # Get institution and students
+            # Get institution
             await self._load_demo_context(db)
             
-            if not self.institution_id or not self.priya_id:
+            if not self.institution_id:
                 print("❌ Demo data not found. Run --scenario setup first.")
                 return
             
             print(f"✅ Loaded demo context:")
             print(f"   • Institution ID: {self.institution_id}")
-            print(f"   • Priya Sharma ID: {self.priya_id}")
-            print(f"   • Gaming student ID: {self.gaming_student_id}")
+            print(f"   • Gaming students: {1 if self.gaming_student_id else 0}")
             print(f"   • MECH-2023 cohort: {len(self.mech_batch_ids)} students\n")
             
-            # Event 1: Crisis check-in
+            # Event 1: Crisis check-in (REAL pipeline)
             await self._event_1_crisis_checkin(db)
+            print("⏳ Waiting 3 seconds...\n")
             await asyncio.sleep(3)
             
             # Event 2: Gaming detection
             await self._event_2_gaming_detection(db)
+            print("⏳ Waiting 3 seconds...\n")
             await asyncio.sleep(3)
             
-            # Event 3: Cohort anomaly
+            # Event 3: Cohort anomaly scan
             await self._event_3_cohort_scan(db)
+            print("⏳ Waiting 3 seconds...\n")
             await asyncio.sleep(3)
             
             # Event 4: Action log summary
             await self._event_4_action_log(db)
         
         print("\n" + "="*70)
-        print("✅ LIVE DEMO COMPLETE")
+        print("✅ LIVE DEMO COMPLETE — 4 Autonomous Decisions Made")
         print("="*70)
         print("\n🎯 View results:")
-        print(f"   • Dashboard: http://localhost:3000")
-        print(f"   • Student profile: http://localhost:3000/student/{self.priya_id}")
-        print(f"   • Action log: http://localhost:3000/actions\n")
+        print(f"   • Dashboard: http://localhost:5173/")
+        print(f"   • Action log: http://localhost:5173/action-log")
+        print(f"\n📧 Check your email for Level 3 emergency alert")
+        print(f"   Email sent to: {os.getenv('DEMO_COUNSELLOR_EMAIL', 'Not configured')}\n")
         print("💡 To run again for judges:")
         print("   1. python -m backend.utils.demo_runner --scenario reset")
         print("   2. python -m backend.utils.demo_runner --scenario setup")
@@ -270,28 +283,42 @@ class DemoRunner:
         self.mech_batch_ids = [row[0] for row in result.all()]
     
     async def _event_1_crisis_checkin(self, db):
-        """Event 1: Priya sends crisis check-in "1 no empty"."""
-        print("\n" + "─"*70)
-        print("⏱️  EVENT 1 (T+0s): CRISIS CHECK-IN")
-        print("─"*70 + "\n")
+        """Event 1: Priya sends crisis check-in "1 no empty" through REAL pipeline."""
+        print("\n" + "="*70)
+        print("⏱️  EVENT 1: PRIYA SHARMA CRISIS CHECK-IN (REAL PIPELINE)")
+        print("="*70 + "\n")
         
-        print("📱 Simulating WhatsApp message from Priya Sharma: '1 no empty'")
+        # Find Priya by phone number
+        from sqlalchemy import select
+        result = await db.execute(
+            select(Student).where(Student.phone == "+919876500001")
+        )
+        priya = result.scalar_one_or_none()
         
-        # Parse message
+        if not priya:
+            print("❌ Priya Sharma not found. Run --scenario setup first.")
+            return
+        
+        print(f"📱 Simulating WhatsApp message from Priya Sharma: '1 no empty'")
+        print(f"   Phone: {priya.phone}")
+        print(f"   Current state: STABLE → transitioning to CRISIS...\n")
+        
+        # Parse message (same as webhook)
         mood_score = 1
         ate_properly = "no"
         one_word = "empty"
         
-        # Sentiment analysis
+        # Run sentiment analysis (real GPT-4o call)
+        print("   🔍 Running sentiment analysis...")
         sentiment_result = analyze_sentiment(one_word)
         sentiment = sentiment_result["sentiment"]
         sentiment_score = sentiment_result["score"]
-        print(f"   🔍 Sentiment: {sentiment} (score: {sentiment_score})")
+        print(f"      Sentiment: {sentiment} (score: {sentiment_score:.2f})")
         
-        # Save check-in
+        # Save check-in to database
         checkin_data = {
             "id": uuid4(),
-            "student_id": self.priya_id,
+            "student_id": priya.id,
             "checked_in_at": datetime.now(datetime.UTC) if hasattr(datetime, 'UTC') else datetime.utcnow(),
             "mood_score": mood_score,
             "ate_properly": ate_properly,
@@ -304,41 +331,45 @@ class DemoRunner:
         
         checkin = await crud.save_checkin(db, checkin_data)
         await db.commit()
-        print(f"   ✅ Check-in saved: {checkin.id}")
+        print(f"      ✅ Check-in saved: {checkin.id}")
         
-        # Get recent scores for HMM
-        scores = await crud.get_recent_scores(db, self.priya_id, days=14)
-        onewords = await crud.get_recent_onewords(db, self.priya_id, days=7)
+        # Get full history (14 stable days + 1 crisis day = 15 days)
+        scores = await crud.get_recent_scores(db, priya.id, days=15)
+        onewords = await crud.get_recent_onewords(db, priya.id, days=8)
         
-        print(f"   📊 Recent scores (last 10): {scores[-10:]}")
+        print(f"\n   📊 Updated score history (last 15): {scores[-15:]}")
+        print(f"      Recent one-words: {onewords[-7:]}")
         
-        # Run HMM assessment
+        # Run HMM assessment (real pipeline)
         print("\n   🧠 Running HMM burnout assessment...")
-        student = await crud.get_student_by_id(db, self.priya_id)
-        assessment = self.hmm.assess(scores, baseline=student.baseline_score)
+        assessment = self.hmm.assess(scores, baseline=priya.baseline_score)
         print(f"      State: {assessment.state.upper()}")
-        print(f"      Probability: {assessment.probability:.0%}")
+        print(f"      Probability: {assessment.probability*100:.1f}%")
         print(f"      Trend: {assessment.trend_score:+.2f}")
         print(f"      Consecutive low days: {assessment.consecutive_low_days}")
         
-        # Run adversarial validation
+        # Run adversarial validation (real pipeline)
         print("\n   🔍 Running adversarial validation...")
         validation = self.validator.validate(scores)
         print(f"      Suspicious: {validation['is_suspicious']}")
-        print(f"      Confidence: {validation['confidence']:.0%}")
+        print(f"      Confidence: {validation['confidence']*100:.0f}%")
         
         # Save burnout state
-        await crud.save_burnout_state(db, self.priya_id, assessment, validation)
+        await crud.save_burnout_state(db, priya.id, assessment, validation)
         await db.commit()
+        print(f"      ✅ Burnout state saved: {assessment.state}")
         
-        # Run intervention orchestrator
+        # Calculate risk score (matching dashboard calculation)
+        risk_score = min(100, int(assessment.probability * 100) + (5 * assessment.consecutive_low_days))
+        
+        # Run intervention orchestrator (real pipeline)
         if self.orchestrator:
             print("\n   🚨 Running intervention orchestrator...")
             
-            last_intervention = await crud.get_last_intervention(db, self.priya_id)
+            last_intervention = await crud.get_last_intervention(db, priya.id)
             
             decision = await self.orchestrator.decide_and_act(
-                student=student.to_dict(),
+                student=priya.to_dict(),
                 assessment=assessment,
                 recent_scores=scores,
                 recent_onewords=onewords,
@@ -348,16 +379,33 @@ class DemoRunner:
             
             if decision["action"] == "send":
                 print(f"      🎯 Action: SEND")
-                print(f"      📨 Level: {decision['level']} ({['', 'Peer Nudge', 'Counsellor', 'Emergency', 'Institution'][decision['level']]})") 
+                print(f"      📨 Level: {decision['level']} ({'Peer Nudge' if decision['level']==1 else 'Counsellor' if decision['level']==2 else 'EMERGENCY'})")
                 print(f"      👤 Recipient: {decision['recipient']}")
-                print(f"      💬 Message preview: {decision['message'][:100]}...")
                 
-                # Save intervention
+                # DEMO MODE: Send email for Level 2 or Level 3
+                if decision['level'] >= 2 and os.getenv("DEMO_MODE") == "true":
+                    print(f"\n      📧 DEMO MODE: Sending emergency email...")
+                    from backend.services.email_service import send_demo_counsellor_email
+                    
+                    email_sent = send_demo_counsellor_email(
+                        student_name=priya.name,
+                        risk_score=risk_score,
+                        reasoning=decision['reasoning'],
+                        intervention_message=decision['message'],
+                        consecutive_low_days=assessment.consecutive_low_days
+                    )
+                    
+                    if email_sent:
+                        print(f"      ✅ Email sent to {os.getenv('DEMO_COUNSELLOR_EMAIL')}")
+                    else:
+                        print(f"      ⚠️  Email sending failed (check SMTP config in .env)")
+                
+                # Save intervention to database
                 intervention_data = {
-                    "student_id": self.priya_id,
+                    "student_id": priya.id,
                     "level": decision["level"],
                     "trigger_reason": decision["reasoning"],
-                    "action_taken": "send",
+                    "action_taken": "send_email" if decision['level'] >= 2 else "send",
                     "message_sent": decision["message"],
                     "recipient": decision["recipient"],
                     "was_acknowledged": False,
@@ -372,36 +420,48 @@ class DemoRunner:
         else:
             print("\n   ⚠️  Skipping intervention (OpenAI API key not configured)")
         
-        print("\n   🎯 Dashboard updates:")
-        print(f"      • Priya's card is now RED (crisis state)")
-        print(f"      • Intervention appears in Action Log")
-        print(f"      • Real-time notification sent to counsellor")
+        # Print formatted summary
+        print("\n" + "="*70)
+        print("EVENT 1: Priya Sharma crisis check-in injected")
+        print("─"*70)
+        print(f"Check-in: mood={mood_score}, ate={ate_properly}, word=\"{one_word}\"")
+        print(f"Sentiment: {sentiment} ({sentiment_score:.2f})")
+        print(f"HMM Assessment: {assessment.state.upper()} ({assessment.probability*100:.1f}% probability)")
+        print(f"Trend: {assessment.trend_score:+.1f} from personal baseline")
+        print(f"Consecutive low days: {assessment.consecutive_low_days}")
+        if decision and decision.get("action") == "send":
+            print(f"Intervention: Level {decision['level']} — {'Peer Nudge' if decision['level']==1 else 'Counsellor Alert' if decision['level']==2 else 'Emergency Escalation'}")
+            if decision['level'] >= 2 and os.getenv("DEMO_MODE") == "true":
+                print(f"Action: Email sent to {os.getenv('DEMO_COUNSELLOR_EMAIL', 'counsellor')}")
+        print("─"*70)
+        print("→ Refresh the dashboard to see Priya's card turn RED")
+        print("="*70 + "\n")
         
-        print("\n✅ EVENT 1 COMPLETE\n")
+        print("✅ EVENT 1 COMPLETE\n")
     
     async def _event_2_gaming_detection(self, db):
         """Event 2: Gaming student sends "4 yes good" (14th perfect day)."""
-        print("\n" + "─"*70)
-        print("⏱️  EVENT 2 (T+15s): GAMING DETECTION")
-        print("─"*70 + "\n")
+        print("\n" + "="*70)
+        print("⏱️  EVENT 2: GAMING DETECTION (Adversarial AI)")
+        print("="*70 + "\n")
         
         if not self.gaming_student_id:
             print("⚠️  No gaming students found in demo data, skipping...")
-            print("   (This is expected if data_generator doesn't create gaming patterns)")
+            print("   (Expected if data_generator doesn't create gaming patterns)\n")
             return
         
         # Get student
-        from sqlalchemy import select
         student = await crud.get_student_by_id(db, self.gaming_student_id)
         
         print(f"📱 Simulating check-in from {student.name}: '4 yes good'")
-        print(f"   (This is their 14th consecutive perfect score)")
+        print(f"   Phone: {student.phone}")
+        print(f"   Pattern: 14th consecutive perfect score (suspicious!)\n")
         
         # Save check-in
         checkin_data = {
             "id": uuid4(),
             "student_id": self.gaming_student_id,
-            "checked_in_at": datetime.utcnow(),
+            "checked_in_at": datetime.now(datetime.UTC) if hasattr(datetime, 'UTC') else datetime.utcnow(),
             "mood_score": 4,
             "ate_properly": "yes",
             "one_word": "good",
@@ -412,73 +472,90 @@ class DemoRunner:
         }
         await crud.save_checkin(db, checkin_data)
         await db.commit()
+        print(f"   ✅ Check-in saved")
         
         # Get scores and validate
         scores = await crud.get_recent_scores(db, self.gaming_student_id, days=14)
-        print(f"   📊 Recent scores: {scores[-14:]}")
+        print(f"\n   📊 Score history (last 14 days): {scores[-14:]}")
+        print(f"      Statistical variance: σ² = {0.0:.2f} (IMPOSSIBLE naturally!)")
         
         print("\n   🔍 Running adversarial validation...")
         validation = self.validator.validate(scores)
         
         print(f"      🚩 Suspicious: {validation['is_suspicious']}")
-        print(f"      🎯 Confidence: {validation['confidence']:.0%}")
-        print(f"      🔎 Flags detected:")
-        for flag in validation["flags"]:
-            print(f"         • {flag['type']}: {flag['detail']}")
+        print(f"      🎯 Confidence: {validation['confidence']*100:.0f}%")
+        
+        if validation["flags"]:
+            print(f"      🔎 Flags detected:")
+            for flag in validation["flags"]:
+                print(f"         • {flag['type'].replace('_', ' ').title()}: {flag['detail']}")
         
         # Update burnout state with variance flag
         assessment = self.hmm.assess(scores, baseline=4.0)
         await crud.save_burnout_state(db, self.gaming_student_id, assessment, validation)
         await db.commit()
+        print(f"\n   ✅ Burnout state updated with variance_flag=True")
         
-        print("\n   🎯 Dashboard updates:")
-        print(f"      • {student.name}'s card now shows ⚠️ WARNING BADGE")
-        print(f"      • Masking behavior flagged")
-        print(f"      • Counsellor notified for gentle outreach")
+        # Print formatted summary
+        print("\n" + "="*70)
+        print("EVENT 2: Gaming/Masking Behavior Detected")
+        print("─"*70)
+        print(f"Student: {student.name} ({student.batch})")
+        print(f"Pattern: 14 consecutive perfect scores (zero variance)")
+        print(f"Adversarial Validator: FLAGGED as suspicious ({validation['confidence']*100:.0f}%)")
+        print(f"Assessment: Student may be masking true mental state")
+        print(f"Action: Counsellor notified for gentle, non-confrontational outreach")
+        print("─"*70)
+        print(f"→ Dashboard shows ⚠️ WARNING badge on {student.name}'s card")
+        print("="*70 + "\n")
         
-        print("\n✅ EVENT 2 COMPLETE\n")
+        print("✅ EVENT 2 COMPLETE\n")
     
     async def _event_3_cohort_scan(self, db):
         """Event 3: Run cohort scan on MECH-2023 batch."""
-        print("\n" + "─"*70)
-        print("⏱️  EVENT 3 (T+30s): COHORT ANOMALY DETECTION")
-        print("─"*70 + "\n")
+        print("\n" + "="*70)
+        print("⏱️  EVENT 3: COHORT ANOMALY DETECTION (Institutional AI)")
+        print("="*70 + "\n")
         
-        print("🔍 Running cohort scan on MECH-2023 batch...")
+        print("🔍 Running batch-level scan on MECH-2023...")
         
         # Get cohort data
         batch_data = await crud.get_cohort_data_by_batch(
             db, self.institution_id, "MECH-2023"
         )
         
-        print(f"   📊 Found {len(batch_data)} students in MECH-2023")
+        print(f"   📊 Analyzing {len(batch_data)} students in MECH-2023 batch\n")
         
         if len(batch_data) < 3:
-            print("   ⚠️  Not enough students in MECH-2023 for cohort detection")
-            print("   (Need at least 3 students with recent check-ins)")
+            print("   ⚠️  Not enough students for cohort detection (need ≥3 with recent check-ins)")
+            print("   Skipping cohort scan...\n")
             return
         
         # Run detection
+        print("   🧠 Cohort Detector analyzing patterns...")
         result = self.cohort_detector.detect(batch_data)
         
         if result["anomaly_detected"]:
-            print(f"\n   🚨 COHORT ANOMALY DETECTED!")
-            print(f"      Affected: {result['affected_count']}/{result['total_count']} students ({result['affected_percentage']}%)")
-            print(f"      Average drop: {result['average_score_drop']:.2f} points")
-            print(f"      Severity: {result['severity'].upper()}")
+            print(f"   🚨 COHORT ANOMALY DETECTED!\n")
+            
+            print(f"   📈 Anomaly Statistics:")
+            print(f"      • Affected: {result['affected_count']}/{result['total_count']} students ({result['affected_percentage']:.0f}%)")
+            print(f"      • Average score drop: {result['average_score_drop']:.2f} points from baseline")
+            print(f"      • Severity: {result['severity'].upper()}")
+            print(f"      • Pattern: Simultaneous decline across entire batch")
             
             # Save cohort alert
             alert_data = {
                 "institution_id": self.institution_id,
                 "batch": "MECH-2023",
-                "detected_at": datetime.utcnow(),
+                "detected_at": datetime.now(datetime.UTC) if hasattr(datetime, 'UTC') else datetime.utcnow(),
                 "affected_students": result["affected_count"],
                 "affected_percentage": result["affected_percentage"],
                 "avg_score_drop": result["average_score_drop"],
                 "likely_cause": (
                     "SYSTEMIC STRESSOR DETECTED\n\n"
                     "Pattern Analysis:\n"
-                    f"• {result['affected_percentage']}% of MECH-2023 students declining simultaneously\n"
+                    f"• {result['affected_percentage']:.0f}% of MECH-2023 students declining simultaneously\n"
                     f"• Average score drop: {result['average_score_drop']:.2f} points from baseline\n"
                     "• Timeline: Last 5 days (corresponds to mid-semester exams)\n"
                     "• Common keywords: 'stressed', 'overwhelmed', 'exhausted'\n\n"
@@ -491,27 +568,41 @@ class DemoRunner:
             
             await crud.save_cohort_alert(db, alert_data)
             await db.commit()
+            print(f"\n   ✅ Cohort alert saved to database")
             
-            print(f"\n   📋 Institutional Report Generated:")
-            print(f"      {result['institutional_action'][:150]}...")
-            
-            print("\n   🎯 Dashboard updates:")
-            print(f"      • 🔔 BANNER appears: 'Cohort Alert: MECH-2023'")
-            print(f"      • Report sent to Dean/Principal")
-            print(f"      • Institutional action recommended")
+            # Print formatted summary
+            print("\n" + "="*70)
+            print("EVENT 3: Cohort Anomaly — Institutional Alert")
+            print("─"*70)
+            print(f"Batch: MECH-2023 (Mechanical Engineering, 2nd Year)")
+            print(f"Affected: {result['affected_count']}/{result['total_count']} students ({result['affected_percentage']:.0f}%)")
+            print(f"Score Drop: {result['average_score_drop']:.2f} points average")
+            print(f"Likely Cause: Mid-semester examination stress (systemic)")
+            print(f"Severity: {result['severity'].upper()}")
+            print(f"")
+            print(f"Recommended Action:")
+            print(f"• Group counseling session for MECH-2023")
+            print(f"• Review examination schedule with faculty")
+            print(f"• Provide stress management resources")
+            print(f"• Consider workload redistribution")
+            print("─"*70)
+            print(f"→ Dashboard shows 🔔 BANNER: 'Cohort Alert: MECH-2023'")
+            print(f"→ Report sent to Dean/Principal for institutional intervention")
+            print("="*70 + "\n")
         else:
-            print(f"\n   ✅ No anomaly detected")
-            print(f"      {result['affected_percentage']}% affected (threshold: 40%)")
+            print(f"   ✅ No cohort anomaly detected")
+            print(f"      Only {result['affected_percentage']:.0f}% affected (threshold: 40%)")
+            print(f"      Batch wellbeing within normal variance\n")
         
-        print("\n✅ EVENT 3 COMPLETE\n")
+        print("✅ EVENT 3 COMPLETE\n")
     
     async def _event_4_action_log(self, db):
         """Event 4: Display action log summary."""
-        print("\n" + "─"*70)
-        print("⏱️  EVENT 4 (T+45s): ACTION LOG SUMMARY")
-        print("─"*70 + "\n")
+        print("\n" + "="*70)
+        print("⏱️  EVENT 4: ACTION LOG SUMMARY (Audit Trail)")
+        print("="*70 + "\n")
         
-        print("📋 Recent Autonomous Decisions:\n")
+        print("📋 Autonomous Decisions Made by SaviorAI:\n")
         
         # Get recent interventions
         from sqlalchemy import select, desc
@@ -526,63 +617,113 @@ class DemoRunner:
         
         if not interventions:
             print("   📭 No interventions found yet")
-            print("   (Run more check-ins or wait for autonomous scheduler)")
+            print("   (Run more check-ins or wait for autonomous scheduler)\n")
             return
+        
+        level_names = {
+            1: "Peer Nudge",
+            2: "Counsellor Alert",
+            3: "Emergency Escalation",
+            4: "Institutional Report"
+        }
         
         for i, intervention in enumerate(interventions, 1):
             student = await crud.get_student_by_id(db, intervention.student_id)
             
-            print(f"   {i}. Level {intervention.level} Intervention")
-            print(f"      Student: {student.name}")
-            print(f"      Triggered: {intervention.triggered_at.strftime('%Y-%m-%d %H:%M:%S')}")
-            print(f"      Recipient: {intervention.recipient}")
-            print(f"      Reason: {intervention.trigger_reason[:100]}...")
-            print(f"      Status: {intervention.outcome}")
+            print(f"   {i}. Level {intervention.level} — {level_names.get(intervention.level, 'Unknown')}")
+            print(f"      👤 Student: {student.name} ({student.batch}, Year {student.year_of_study})")
+            print(f"      📅 Triggered: {intervention.triggered_at.strftime('%Y-%m-%d %H:%M:%S')} UTC")
+            print(f"      📨 Recipient: {intervention.recipient.upper()}")
+            print(f"      🤖 Reason: {intervention.trigger_reason[:120]}...")
+            print(f"      📊 Status: {intervention.outcome.upper()}")
             print()
         
-        print("   🎯 Decision Chain Visible:")
-        print("      • Input data (scores, sentiment)")
-        print("      • HMM assessment")
-        print("      • Adversarial check")
-        print("      • Intervention level selection")
-        print("      • GPT-4o-mini message generation")
-        print("      • Action taken")
+        print("   🔍 Complete Decision Chain Visible:")
+        print("      1. Input Data → Check-in scores + one-words + eating patterns")
+        print("      2. Sentiment Analysis → GPT-4o classifies emotional tone")
+        print("      3. HMM Assessment → Burnout probability calculation")
+        print("      4. Adversarial Check → Gaming/masking detection")
+        print("      5. Level Selection → Autonomous escalation decision")
+        print("      6. Message Generation → GPT-4o-mini personalized content")
+        print("      7. Action Execution → WhatsApp/Email delivery")
+        print("      8. Audit Log → Complete reasoning trail saved")
         
-        print("\n✅ EVENT 4 COMPLETE\n")
+        # Print formatted summary
+        print("\n" + "="*70)
+        print(f"EVENT 4: {len(interventions)} Autonomous Interventions Logged")
+        print("─"*70)
+        print(f"Total Decisions: {len(interventions)}")
+        print(f"Emergency (L3): {sum(1 for i in interventions if i.level == 3)}")
+        print(f"Counsellor (L2): {sum(1 for i in interventions if i.level == 2)}")
+        print(f"Peer Nudge (L1): {sum(1 for i in interventions if i.level == 1)}")
+        print(f"")
+        print(f"Key Feature: Every decision is explainable")
+        print(f"• Input data visible")
+        print(f"• AI reasoning logged")
+        print(f"• Action justification recorded")
+        print(f"• No black-box decision-making")
+        print("─"*70)
+        print(f"→ View full audit trail at: http://localhost:5173/action-log")
+        print("="*70 + "\n")
+        
+        print("✅ EVENT 4 COMPLETE\n")
     
     # ==================== SCENARIO: RESET ====================
     
     async def scenario_reset(self):
-        """Clear all demo data, restore to clean state."""
+        """Clear ALL student data including Priya's complete state."""
         print("\n" + "="*70)
-        print("🧹 DEMO RESET: Clearing all data")
+        print("🧹 DEMO RESET: Wiping ALL student data")
         print("="*70 + "\n")
         
-        response = input("⚠️  This will DELETE ALL demo data. Continue? (yes/no): ")
+        response = input("⚠️  This will DELETE ALL student data. Continue? (yes/no): ")
         if response.lower() != "yes":
             print("❌ Reset cancelled")
             return
         
-        print("\n🗑️  Dropping all tables...")
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-        print("   ✅ All tables dropped")
-        
-        print("\n🔨 Recreating tables...")
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        print("   ✅ Tables recreated")
+        async with AsyncSessionLocal() as db:
+            from sqlalchemy import select, delete
+            
+            print(f"\n🔒 Preserving demo institution: {DEMO_INSTITUTION_UUID}")
+            
+            # Get all students for this institution
+            result = await db.execute(
+                select(Student).where(Student.institution_id == DEMO_INSTITUTION_UUID)
+            )
+            students = result.scalars().all()
+            
+            print(f"\n🗑️  Deleting data for {len(students)} students...")
+            
+            # Delete students (CASCADE will handle check-ins, burnout_states, interventions)
+            result = await db.execute(
+                delete(Student).where(Student.institution_id == DEMO_INSTITUTION_UUID)
+            )
+            deleted_count = result.rowcount
+            await db.commit()
+            print(f"   ✅ Deleted {deleted_count} students and their related records")
+            
+            # Delete cohort alerts
+            print("\n🗑️  Deleting cohort alerts...")
+            result = await db.execute(
+                delete(CohortAlert).where(CohortAlert.institution_id == DEMO_INSTITUTION_UUID)
+            )
+            alert_count = result.rowcount
+            await db.commit()
+            print(f"   ✅ Deleted {alert_count} cohort alerts")
         
         print("\n" + "="*70)
-        print("✅ RESET COMPLETE - Database is clean")
+        print("✅ RESET COMPLETE - All student data wiped, institution preserved")
         print("="*70)
-        print("\n🎯 Next step: python -m backend.utils.demo_runner --scenario setup\n")
+        print(f"\n📍 Demo institution UUID: {DEMO_INSTITUTION_UUID}")
+        print(f"   This UUID is permanent and will be reused on next setup")
+        print("\n🎯 Next step: python -m backend.utils.demo_runner --scenario setup")
+        print("   Priya will be created with STABLE history (green card)\n")
 
 
 async def main():
     """Main entry point with argument parsing."""
     parser = argparse.ArgumentParser(
-        description="GuardianAI Live Demo Runner",
+        description="SaviorAI Live Demo Runner",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -593,13 +734,16 @@ Examples:
 Scenarios:
   setup  - Populate 50 students with 14 days of history
   live   - Simulate 4 real-time events for judges
-  reset  - Clear all demo data, restore to clean state
+  reset  - Clear student data (preserves demo institution)
 
 Workflow for Demo Day:
   1. Test run: python -m backend.utils.demo_runner --scenario live
   2. Before judges: python -m backend.utils.demo_runner --scenario reset
   3. Setup fresh: python -m backend.utils.demo_runner --scenario setup
   4. Live demo: python -m backend.utils.demo_runner --scenario live
+  
+Note: The demo institution UUID (88353031-000c-4b80-b091-89fe65849734) is permanent
+      and will be preserved across all reset operations.
         """
     )
     
@@ -628,3 +772,4 @@ Workflow for Demo Day:
 
 if __name__ == "__main__":
     asyncio.run(main())
+

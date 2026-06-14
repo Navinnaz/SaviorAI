@@ -188,7 +188,7 @@ This gives meaningful, interpretable risk percentages while still using the HMM'
 
 ## All Systems Go! 🚀
 
-Your GuardianAI demo is now ready:
+Your SaviorAI demo is now ready:
 - ✅ Risk scores display correctly
 - ✅ Heatmap sorted by risk
 - ✅ Student profiles show accurate timelines
@@ -196,3 +196,4 @@ Your GuardianAI demo is now ready:
 - ✅ Color coding aligned with risk levels
 
 **Time to impress with your demo!** 🎯
+

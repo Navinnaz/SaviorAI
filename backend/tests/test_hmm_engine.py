@@ -1,5 +1,5 @@
 """
-GuardianAI - HMM Engine Test Suite
+SaviorAI - HMM Engine Test Suite
 
 Tests for the Hidden Markov Model burnout detection engine.
 Validates state detection, trend calculation, and reasoning generation.
@@ -278,9 +278,10 @@ def test_dataclass_structure():
 if __name__ == "__main__":
     """Run tests directly with python"""
     print("=" * 60)
-    print("GuardianAI HMM Engine Test Suite")
+    print("SaviorAI HMM Engine Test Suite")
     print("=" * 60)
     print()
     
     # Run pytest programmatically
     pytest.main([__file__, "-v", "--tb=short"])
+

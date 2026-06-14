@@ -1,4 +1,4 @@
-# GuardianAI - AI Core System Test Results ✅
+# SaviorAI - AI Core System Test Results ✅
 
 ## Test Date: June 12, 2026
 ## Status: **ALL TESTS PASSED** 🎉
@@ -124,7 +124,7 @@
    - Diagnosis: Systemic stressor (e.g., difficult exam period)
    - **PASS**
 
-**Analysis**: Cohort detector correctly identifies batch-level anomalies. This is the feature that sets GuardianAI apart from individual wellness apps.
+**Analysis**: Cohort detector correctly identifies batch-level anomalies. This is the feature that sets SaviorAI apart from individual wellness apps.
 
 ---
 
@@ -271,7 +271,7 @@ Check-in Input
 - Monthly interventions: ~600
 - Cost: 600 × $0.002 = **$1.20/month**
 
-**GuardianAI is extremely cost-efficient!**
+**SaviorAI is extremely cost-efficient!**
 
 ---
 
@@ -294,3 +294,4 @@ All AI core systems are fully operational:
 **Run Command**: `python test_ai_core.py`  
 **Test Duration**: ~10 seconds  
 **OpenAI Cost**: ~$0.005 per test run
+

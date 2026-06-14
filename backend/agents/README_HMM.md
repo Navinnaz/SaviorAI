@@ -1,8 +1,8 @@
-# GuardianAI - Hidden Markov Model Engine
+# SaviorAI - Hidden Markov Model Engine
 
 ## Overview
 
-The HMM (Hidden Markov Model) engine is the core AI component of GuardianAI. It models student burnout as a probabilistic state machine rather than a simple threshold system.
+The HMM (Hidden Markov Model) engine is the core AI component of SaviorAI. It models student burnout as a probabilistic state machine rather than a simple threshold system.
 
 ## Why HMM?
 
@@ -12,7 +12,7 @@ The HMM (Hidden Markov Model) engine is the core AI component of GuardianAI. It 
 - They treat all students identically
 - They wait for crisis before acting
 
-**GuardianAI's HMM succeeds because:**
+**SaviorAI's HMM succeeds because:**
 - It models burnout as **gradual accumulation**, not threshold crossing
 - It uses **personal baselines** for each student
 - It considers **transition probabilities** between states
@@ -203,3 +203,4 @@ After HMM engine is verified:
 - Schaufeli, W. B., & Leiter, M. P. (2000). The Burnout Epidemic
 - Maslach, C., & Jackson, S. E. (1981). Maslach Burnout Inventory
 - NIMHANS Student Wellness Data (2018-2022)
+

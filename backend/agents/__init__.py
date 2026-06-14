@@ -1,5 +1,5 @@
 """
-GuardianAI Agent Core Package
+SaviorAI Agent Core Package
 The autonomous decision-making engine
 """
 
@@ -15,3 +15,4 @@ __all__ = [
     "CohortAnomalyDetector",
     "InterventionOrchestrator"
 ]
+

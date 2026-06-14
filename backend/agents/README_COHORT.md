@@ -1,4 +1,4 @@
-# GuardianAI - Cohort Anomaly Detector
+# SaviorAI - Cohort Anomaly Detector
 
 ## Overview
 
@@ -318,14 +318,14 @@ async def run_all_cohort_scans():
 
 ## Why This Matters
 
-Traditional mental health apps focus on **individuals**. GuardianAI adds **institutional intelligence**.
+Traditional mental health apps focus on **individuals**. SaviorAI adds **institutional intelligence**.
 
 When a student's burnout is part of a **cohort-wide pattern**, the intervention strategy must be different:
 - ✅ Address the systemic cause (policy, faculty, workload)
 - ✅ Prevent cascade effect (seeing peers suffer → own mental health declines)
 - ✅ Institutional accountability (data-driven reports to administrators)
 
-**This is the autonomous agent feature that makes GuardianAI truly systemic.**
+**This is the autonomous agent feature that makes SaviorAI truly systemic.**
 
 ---
 
@@ -335,4 +335,5 @@ Built for **FAR AWAY 2026 Hackathon** — Theme: Agentic & Autonomous Systems
 
 This detector runs **autonomously** every day with zero human input. It makes **institutional-level decisions** that save lives by catching what individual counselling cannot.
 
-**"One student dies by suicide every 40 minutes in India. GuardianAI watches what counsellors can't — at scale, before the crisis."**
+**"One student dies by suicide every 40 minutes in India. SaviorAI watches what counsellors can't — at scale, before the crisis."**
+

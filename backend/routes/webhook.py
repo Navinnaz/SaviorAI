@@ -1,5 +1,5 @@
 """
-GuardianAI - Twilio WhatsApp Webhook Handler
+SaviorAI - Twilio WhatsApp Webhook Handler
 
 This is the CRITICAL route that receives every student check-in
 and triggers the full autonomous agent pipeline.
@@ -347,7 +347,7 @@ async def whatsapp_webhook(
     """
     Twilio WhatsApp webhook handler.
     
-    Receives every WhatsApp message sent to the GuardianAI bot number.
+    Receives every WhatsApp message sent to the SaviorAI bot number.
     Parses check-in data and triggers full autonomous agent pipeline.
     
     CRITICAL: Must respond within 5 seconds (Twilio timeout).
@@ -414,7 +414,7 @@ async def whatsapp_webhook(
                     get_whatsapp_service().send_message,
                     From,
                     "I don't recognize this number. Please contact your institution "
-                    "to register with GuardianAI."
+                    "to register with SaviorAI."
                 )
                 
                 return Response(content="", media_type="text/plain")
@@ -514,3 +514,4 @@ async def whatsapp_status_callback(
         # Student engaged with message - good signal
     
     return Response(content="", media_type="text/plain")
+

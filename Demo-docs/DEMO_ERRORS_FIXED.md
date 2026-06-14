@@ -194,19 +194,19 @@ Gaming patterns are created randomly by data_generator.
 **After setup, check:**
 ```bash
 # Should show 50
-psql -d guardianai -c "SELECT COUNT(*) FROM students;"
+psql -d SaviorAI -c "SELECT COUNT(*) FROM students;"
 
 # Should exist
-psql -d guardianai -c "SELECT name FROM students WHERE name='Priya Sharma';"
+psql -d SaviorAI -c "SELECT name FROM students WHERE name='Priya Sharma';"
 ```
 
 **After live, check:**
 ```bash
 # Should show ~702 (700 from setup + 2 from live)
-psql -d guardianai -c "SELECT COUNT(*) FROM checkins;"
+psql -d SaviorAI -c "SELECT COUNT(*) FROM checkins;"
 
 # Should show ~16 (15 from setup + 1 from live)
-psql -d guardianai -c "SELECT COUNT(*) FROM interventions;"
+psql -d SaviorAI -c "SELECT COUNT(*) FROM interventions;"
 ```
 
 ---
@@ -235,3 +235,4 @@ psql -d guardianai -c "SELECT COUNT(*) FROM interventions;"
 ---
 
 **All errors fixed! Demo runner is now fully functional.** 🚀
+

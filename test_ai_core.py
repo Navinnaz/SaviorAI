@@ -1,5 +1,5 @@
 """
-GuardianAI - Comprehensive AI Core System Test
+SaviorAI - Comprehensive AI Core System Test
 Tests all 4 autonomous agents + OpenAI integration
 """
 
@@ -273,7 +273,7 @@ async def test_intervention_orchestrator():
 async def run_all_tests():
     """Run complete test suite"""
     print("\n" + "🤖"*35)
-    print("  GUARDIANAI - AI CORE SYSTEM TEST SUITE")
+    print("  SaviorAI - AI CORE SYSTEM TEST SUITE")
     print("  Testing all autonomous agents + OpenAI integration")
     print("🤖"*35)
     
@@ -320,3 +320,4 @@ async def run_all_tests():
 if __name__ == "__main__":
     exit_code = asyncio.run(run_all_tests())
     sys.exit(exit_code)
+

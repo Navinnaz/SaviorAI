@@ -1,8 +1,8 @@
-# GuardianAI - Intervention Orchestrator
+# SaviorAI - Intervention Orchestrator
 
 ## Overview
 
-The Intervention Orchestrator is the **decision-making core** of GuardianAI. This is what makes the system truly **AGENTIC**:
+The Intervention Orchestrator is the **decision-making core** of SaviorAI. This is what makes the system truly **AGENTIC**:
 
 - **Perceives:** Reads assessment data from HMM, adversarial validator, cohort detector
 - **Reasons:** Applies rule-based logic + GPT-4o contextual understanding
@@ -548,7 +548,7 @@ if exam_week:
 
 Traditional mental health systems require students to **self-report** or **seek help**. By the time a student walks into a counsellor's office, they may already be in crisis.
 
-GuardianAI **inverts this model:**
+SaviorAI **inverts this model:**
 - ✅ System detects early warning signs autonomously
 - ✅ Intervention happens **before crisis**, not after
 - ✅ Warm, non-clinical outreach reduces stigma
@@ -566,7 +566,7 @@ Built for **FAR AWAY 2026 Hackathon** — Theme: Agentic & Autonomous Systems
 
 This orchestrator makes **institutional-level decisions autonomously** with full transparency (decision logs) and accountability (audit trails).
 
-**"One student dies by suicide every 40 minutes in India. GuardianAI is the agent that intervenes at scale, before the tragedy."**
+**"One student dies by suicide every 40 minutes in India. SaviorAI is the agent that intervenes at scale, before the tragedy."**
 
 ---
 
@@ -593,3 +593,4 @@ This orchestrator makes **institutional-level decisions autonomously** with full
 - System is **assistive**, not **deterministic** (humans have final say)
 
 **This system augments counsellors, it does not replace them.**
+

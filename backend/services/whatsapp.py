@@ -1,5 +1,5 @@
 """
-GuardianAI - WhatsApp Service
+SaviorAI - WhatsApp Service
 
 Handles all WhatsApp messaging via Twilio API.
 Provides high-level functions for sending various message types.
@@ -84,7 +84,7 @@ class WhatsAppService:
             True if message sent successfully, False otherwise
         
         Example:
-            >>> service.send_message("+919876543210", "Hello from GuardianAI!")
+            >>> service.send_message("+919876543210", "Hello from SaviorAI!")
             True
         """
         try:
@@ -163,7 +163,7 @@ Your response helps us support you better. 💙"""
         Returns:
             True if sent successfully, False otherwise
         """
-        message = f"""🔔 GuardianAI Counsellor Alert
+        message = f"""🔔 SaviorAI Counsellor Alert
 
 Student: {student_name}
 
@@ -193,7 +193,7 @@ Reply ACK to acknowledge this alert."""
         Returns:
             True if sent successfully, False otherwise
         """
-        message = f"""🚨 URGENT: GuardianAI Emergency Alert
+        message = f"""🚨 URGENT: SaviorAI Emergency Alert
 
 Student: {student_name}
 
@@ -283,3 +283,22 @@ def get_whatsapp_service() -> WhatsAppService:
     if _whatsapp_service is None:
         _whatsapp_service = WhatsAppService()
     return _whatsapp_service
+
+
+
+# Convenience function for add_my_number.py
+def send_checkin_prompt(to_phone: str) -> bool:
+    """Send check-in prompt to student for live demo."""
+    service = get_whatsapp_service()
+    message = """Hey! 👋 SaviorAI checking in.
+
+Please reply in this format:
+[1-5] [yes/mostly/no] [one word]
+
+Example: 3 yes tired
+
+• How was your day? (1=terrible, 5=amazing)
+• Did you eat properly today?
+• One word for how you're feeling?"""
+    
+    return service.send_message(to_phone, message)

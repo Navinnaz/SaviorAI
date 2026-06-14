@@ -61,3 +61,4 @@ For production improvements, consider:
 - Log-space Viterbi algorithm to avoid underflow
 - Separate confidence scores for state predictions
 - Calibrated probability scaling for user display
+

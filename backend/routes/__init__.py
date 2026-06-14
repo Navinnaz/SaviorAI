@@ -1,5 +1,5 @@
 """
-GuardianAI API Routes Package
+SaviorAI API Routes Package
 """
 
 from . import webhook, students, dashboard, interventions, cohorts
@@ -11,3 +11,4 @@ __all__ = [
     "interventions",
     "cohorts"
 ]
+

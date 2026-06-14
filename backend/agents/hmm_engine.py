@@ -1,5 +1,5 @@
 """
-GuardianAI - Hidden Markov Model (HMM) Burnout State Machine
+SaviorAI - Hidden Markov Model (HMM) Burnout State Machine
 
 States: Stable (S0), At-Risk (S1), Crisis (S2)
 
@@ -331,3 +331,4 @@ class BurnoutHMM:
             assessments.append(assessment)
         
         return assessments
+

@@ -1,5 +1,5 @@
 """
-GuardianAI - Cohort Anomaly Detector
+SaviorAI - Cohort Anomaly Detector
 
 Detects systemic stressors affecting groups of students simultaneously.
 
@@ -282,3 +282,4 @@ class CohortAnomalyDetector:
         )
         
         return detected_anomalies
+

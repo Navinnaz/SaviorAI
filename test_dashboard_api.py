@@ -7,7 +7,7 @@ import requests
 import json
 
 BASE_URL = "http://localhost:8000/api/dashboard"
-API_KEY = "guardianai_dev_key_2024"
+API_KEY = "SaviorAI_dev_key_2024"
 HEADERS = {"X-API-Key": API_KEY}
 
 # You'll need to replace these with actual UUIDs from your database
@@ -115,7 +115,7 @@ def test_auth_failure():
 
 if __name__ == "__main__":
     print("="*60)
-    print("GuardianAI Dashboard API Test Suite")
+    print("SaviorAI Dashboard API Test Suite")
     print("="*60 + "\n")
     
     print("⚠️  Update INSTITUTION_ID and STUDENT_ID with real UUIDs first!\n")
@@ -136,3 +136,4 @@ if __name__ == "__main__":
     print("="*60)
     print("Tests complete!")
     print("="*60)
+

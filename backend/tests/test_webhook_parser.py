@@ -1,5 +1,5 @@
 """
-GuardianAI - Webhook Message Parser Test Suite
+SaviorAI - Webhook Message Parser Test Suite
 
 Tests for check-in message parsing from various formats.
 """
@@ -250,7 +250,7 @@ def test_parse_mixed_format():
 def run_all_tests():
     """Run all webhook parser tests"""
     print("\n" + "="*70)
-    print(" "*10 + "GuardianAI Webhook Parser Test Suite")
+    print(" "*10 + "SaviorAI Webhook Parser Test Suite")
     print("="*70)
     
     tests = [
@@ -300,3 +300,4 @@ if __name__ == "__main__":
     
     success = run_all_tests()
     sys.exit(0 if success else 1)
+

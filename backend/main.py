@@ -1,5 +1,5 @@
 """
-GuardianAI - Autonomous Student Mental Health Triage Agent
+SaviorAI - Autonomous Student Mental Health Triage Agent
 FastAPI Application Entry Point
 
 The agent that catches burnout before it becomes a tragedy.
@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
     """
     # Startup
     await init_db()
-    print("✅ GuardianAI database connection pool initialized")
+    print("✅ SaviorAI database connection pool initialized")
     
     # Start scheduler
     start_scheduler()
@@ -43,12 +43,12 @@ async def lifespan(app: FastAPI):
     # Shutdown
     stop_scheduler()
     await close_db()
-    print("🔌 GuardianAI database connections closed")
+    print("🔌 SaviorAI database connections closed")
 
 
 # Initialize FastAPI application
 app = FastAPI(
-    title="GuardianAI API",
+    title="SaviorAI API",
     description="Autonomous student mental health triage agent - FAR AWAY 2026",
     version="1.0.0",
     lifespan=lifespan
@@ -77,7 +77,7 @@ async def root():
     """
     return {
         "status": "operational",
-        "agent": "GuardianAI",
+        "agent": "SaviorAI",
         "version": "1.0.0",
         "tagline": "The autonomous agent that catches student burnout before it becomes a tragedy.",
         "theme": "Agentic & Autonomous Systems",
@@ -146,3 +146,4 @@ if __name__ == "__main__":
         port=8000,
         reload=os.getenv("DEBUG", "false").lower() == "true"
     )
+

@@ -1,5 +1,5 @@
 """
-GuardianAI - Students API Routes
+SaviorAI - Students API Routes
 CRUD operations for student management
 """
 
@@ -71,3 +71,4 @@ async def get_student(student_id: str, db: AsyncSession = Depends(get_db)):
         "is_active": student.is_active,
         "enrolled_at": student.enrolled_at.isoformat()
     }
+

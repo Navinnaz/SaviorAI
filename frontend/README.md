@@ -1,4 +1,4 @@
-# GuardianAI Dashboard - React PWA
+# SaviorAI Dashboard - React PWA
 
 Dark, clinical-grade mental health monitoring interface built for FAR AWAY 2026.
 
@@ -113,7 +113,7 @@ frontend/
 
 ### Configuration
 - **Base URL**: `/api/dashboard` (proxied to `http://localhost:8000`)
-- **API Key**: `guardianai_dev_key_2024`
+- **API Key**: `SaviorAI_dev_key_2024`
 - **Institution ID**: Auto-detected or from localStorage
 
 ### Endpoints Used
@@ -374,4 +374,5 @@ netlify deploy
 
 Built for **FAR AWAY 2026** - Agentic & Autonomous Systems
 
-GuardianAI: The autonomous agent that catches student burnout before it becomes a tragedy.
+SaviorAI: The autonomous agent that catches student burnout before it becomes a tragedy.
+

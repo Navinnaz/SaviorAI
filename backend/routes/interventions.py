@@ -1,5 +1,5 @@
 """
-GuardianAI - Interventions API Routes
+SaviorAI - Interventions API Routes
 View autonomous intervention history
 """
 
@@ -77,3 +77,4 @@ async def get_intervention(intervention_id: str, db: AsyncSession = Depends(get_
         "triggered_at": intervention.triggered_at.isoformat(),
         "outcome": intervention.outcome
     }
+

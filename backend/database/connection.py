@@ -1,5 +1,5 @@
 """
-GuardianAI Database Connection Manager
+SaviorAI Database Connection Manager
 Async PostgreSQL connection pool using asyncpg and SQLAlchemy 2.0
 """
 
@@ -23,7 +23,7 @@ if not DATABASE_URL:
 # asyncpg is the async driver for PostgreSQL
 engine = create_async_engine(
     DATABASE_URL,
-    echo=os.getenv("DEBUG", "false").lower() == "true",
+    echo=False,  # Disable SQL query logging for clean demo output
     pool_size=10,
     max_overflow=20,
     pool_pre_ping=True,  # Verify connections before using
@@ -99,3 +99,4 @@ def get_db_session():
             student = await crud.get_student_by_phone(db, phone)
     """
     return AsyncSessionLocal()
+

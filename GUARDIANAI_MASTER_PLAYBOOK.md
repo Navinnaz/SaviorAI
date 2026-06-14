@@ -1401,7 +1401,7 @@ Context: GuardianAI is complete and demo-ready.
 Task: Create a competition-grade GitHub README.md
 
 Structure:
-1. Header: Logo (emoji 🧠), title "GuardianAI", tagline
+1. Header: Logo (use live vector graphics), title "GuardianAI", tagline
 2. Badges: Python, FastAPI, React, PostgreSQL, OpenAI, Twilio
 3. Problem statement: 3 sentences with the 13,892 statistic
 4. Demo GIF placeholder (note: "replace with demo.gif")

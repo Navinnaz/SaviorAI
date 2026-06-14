@@ -1,5 +1,5 @@
 """
-GuardianAI - Autonomous Scheduler
+SaviorAI - Autonomous Scheduler
 APScheduler for automated daily operations:
 1. Daily check-in blast (7:30 PM IST)
 2. Morning risk scan (8:00 AM IST)
@@ -142,7 +142,7 @@ async def morning_risk_scan():
         
         # Generate summary
         summary = (
-            f"📊 GuardianAI Morning Risk Scan\n"
+            f"📊 SaviorAI Morning Risk Scan\n"
             f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
             f"Students Assessed: {total_assessed}/{len(students)}\n"
             f"New At-Risk: {len(new_at_risk)}\n"
@@ -276,7 +276,7 @@ def start_scheduler():
     )
     
     scheduler.start()
-    logger.info("✅ GuardianAI Scheduler started with 3 jobs:")
+    logger.info("✅ SaviorAI Scheduler started with 3 jobs:")
     logger.info("  📱 Daily check-in blast: 7:30 PM IST")
     logger.info("  🔍 Morning risk scan: 8:00 AM IST")
     logger.info("  📈 Weekly baseline update: Sunday midnight IST")
@@ -285,4 +285,5 @@ def start_scheduler():
 def stop_scheduler():
     """Stop the scheduler gracefully."""
     scheduler.shutdown(wait=True)
-    logger.info("🔌 GuardianAI Scheduler stopped")
+    logger.info("🔌 SaviorAI Scheduler stopped")
+

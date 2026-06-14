@@ -10,7 +10,7 @@ from backend.database.connection import AsyncSessionLocal
 from backend.database.models import Institution, Student, CheckIn, BurnoutState, Intervention
 
 BASE_URL = "http://localhost:8000/api/dashboard"
-API_KEY = "guardianai_dev_key_2024"
+API_KEY = "SaviorAI_dev_key_2024"
 HEADERS = {"X-API-Key": API_KEY}
 
 
@@ -247,7 +247,7 @@ async def cleanup_test_data():
 async def main():
     """Run complete test suite."""
     print("\n" + "="*60)
-    print("GuardianAI Dashboard API - Complete Test Suite")
+    print("SaviorAI Dashboard API - Complete Test Suite")
     print("="*60)
     
     # Create test data
@@ -276,3 +276,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+

@@ -1,7 +1,7 @@
 """
-GuardianAI - Autonomous Intervention Orchestrator
+SaviorAI - Autonomous Intervention Orchestrator
 
-The decision-making core of GuardianAI.
+The decision-making core of SaviorAI.
 
 This is what makes it AGENTIC:
 - It perceives (reads assessment data)
@@ -25,6 +25,7 @@ from datetime import datetime
 from dateutil import parser
 import logging
 import asyncio
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -450,7 +451,7 @@ class InterventionOrchestrator:
         }
         
         prompt = f"""
-You are GuardianAI, an autonomous student wellbeing agent.
+You are SaviorAI, an autonomous student wellbeing agent.
 
 Student: {student.get('name', 'Unknown')}, Year {student.get('year_of_study', 'N/A')}, {student.get('batch', 'N/A')}
 Assessment: {assessment.state.upper()} (probability: {assessment.probability:.0%})
@@ -594,3 +595,4 @@ Masking behavior itself can indicate distress.
         
         hours = (now - timestamp).total_seconds() / 3600
         return hours
+

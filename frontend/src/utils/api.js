@@ -1,5 +1,5 @@
 const API_BASE = '/api/dashboard'
-const API_KEY = 'guardianai_dev_key_2024'
+const API_KEY = 'SaviorAI_dev_key_2024'
 
 // Get institution ID from localStorage or use default
 const getInstitutionId = () => {
@@ -48,3 +48,4 @@ export const getRecentInterventions = (limit = 20) => {
   const instId = getInstitutionId()
   return fetchAPI(`/interventions/recent?institution_id=${instId}&limit=${limit}`)
 }
+

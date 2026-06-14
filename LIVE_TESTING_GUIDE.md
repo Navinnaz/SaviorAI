@@ -1,4 +1,4 @@
-# GuardianAI - Complete Live Testing Guide
+# SaviorAI - Complete Live Testing Guide
 
 ## 🚀 Real-Time Workflow Testing Checklist
 
@@ -16,8 +16,8 @@ python backend\main.py
 
 **✅ Check**:
 - [ ] `✅ Database initialized: railway`
-- [ ] `✅ GuardianAI database connection pool initialized`
-- [ ] `✅ GuardianAI Scheduler started with 3 jobs`
+- [ ] `✅ SaviorAI database connection pool initialized`
+- [ ] `✅ SaviorAI Scheduler started with 3 jobs`
 - [ ] `INFO: Application startup complete`
 - [ ] Server running on `http://127.0.0.1:8000`
 
@@ -110,7 +110,7 @@ python -m backend.utils.demo_runner
 - [ ] Install prompt appears
 - [ ] App installs as standalone
 - [ ] Opens in new window (no browser chrome)
-- [ ] Notification: "GuardianAI is watching"
+- [ ] Notification: "SaviorAI is watching"
 - [ ] Works offline (enable airplane mode, refresh)
 
 **Action**: Mobile - Add to home screen
@@ -149,7 +149,7 @@ curl http://localhost:8000/health
 
 ### Test 3.2: Dashboard API - Overview
 ```bash
-curl -H "X-API-Key: guardianai_dev_key_2024" \
+curl -H "X-API-Key: SaviorAI_dev_key_2024" \
   http://localhost:8000/api/dashboard/747f60be-c964-448f-879c-04291df5941d/overview
 ```
 
@@ -162,7 +162,7 @@ curl -H "X-API-Key: guardianai_dev_key_2024" \
 
 ### Test 3.3: Dashboard API - Heatmap
 ```bash
-curl -H "X-API-Key: guardianai_dev_key_2024" \
+curl -H "X-API-Key: SaviorAI_dev_key_2024" \
   http://localhost:8000/api/dashboard/747f60be-c964-448f-879c-04291df5941d/heatmap
 ```
 
@@ -175,7 +175,7 @@ curl -H "X-API-Key: guardianai_dev_key_2024" \
 ### Test 3.4: Dashboard API - Student Profile
 ```bash
 # Get a student ID from heatmap response, then:
-curl -H "X-API-Key: guardianai_dev_key_2024" \
+curl -H "X-API-Key: SaviorAI_dev_key_2024" \
   http://localhost:8000/api/dashboard/student/{STUDENT_ID}/profile
 ```
 
@@ -648,3 +648,4 @@ Day 7: 1 no hopeless
 **Ready for Testing!** 🚀
 
 Follow phases 1-10 in order for comprehensive validation.
+

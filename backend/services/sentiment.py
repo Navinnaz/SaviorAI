@@ -1,5 +1,5 @@
 """
-GuardianAI - Sentiment Analysis Service
+SaviorAI - Sentiment Analysis Service
 
 Fast keyword-based sentiment analysis for one-word responses.
 Categorizes as: positive, neutral, negative, concerning
@@ -76,3 +76,4 @@ def analyze_sentiment(one_word: str) -> dict:
     else:
         logger.debug(f"Neutral sentiment (unknown word): {one_word}")
         return {"sentiment": "neutral", "score": 0.0}
+

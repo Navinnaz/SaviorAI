@@ -1,4 +1,4 @@
-# GuardianAI Dashboard API - Implementation Complete ✅
+# SaviorAI Dashboard API - Implementation Complete ✅
 
 **Date:** June 12, 2026  
 **Status:** Ready for Testing
@@ -55,7 +55,7 @@ Complete institutional monitoring and analytics system with 6 endpoints:
 - All endpoints (except `/health`) require `X-API-Key` header
 - Invalid key → 403 Forbidden
 - Missing key → 401 Unauthorized
-- Current dev key: `guardianai_dev_key_2024` (in `.env`)
+- Current dev key: `SaviorAI_dev_key_2024` (in `.env`)
 
 ### Input Validation
 - UUID format validation
@@ -97,7 +97,7 @@ Complete institutional monitoring and analytics system with 6 endpoints:
 
 ### Modified Files
 1. **`.env`**
-   - Added `DASHBOARD_API_KEY=guardianai_dev_key_2024`
+   - Added `DASHBOARD_API_KEY=SaviorAI_dev_key_2024`
 
 2. **`backend/main.py`**
    - Already had dashboard router imported ✅
@@ -133,19 +133,19 @@ JSON Response
 curl http://localhost:8000/api/dashboard/health
 
 # 2. Get institution overview
-curl -H "X-API-Key: guardianai_dev_key_2024" \
+curl -H "X-API-Key: SaviorAI_dev_key_2024" \
   http://localhost:8000/api/dashboard/YOUR_INSTITUTION_UUID/overview
 
 # 3. Get student heatmap
-curl -H "X-API-Key: guardianai_dev_key_2024" \
+curl -H "X-API-Key: SaviorAI_dev_key_2024" \
   http://localhost:8000/api/dashboard/YOUR_INSTITUTION_UUID/heatmap | jq
 
 # 4. Get student profile
-curl -H "X-API-Key: guardianai_dev_key_2024" \
+curl -H "X-API-Key: SaviorAI_dev_key_2024" \
   http://localhost:8000/api/dashboard/student/YOUR_STUDENT_UUID/profile | jq
 
 # 5. Get recent interventions
-curl -H "X-API-Key: guardianai_dev_key_2024" \
+curl -H "X-API-Key: SaviorAI_dev_key_2024" \
   "http://localhost:8000/api/dashboard/interventions/recent?limit=5" | jq
 ```
 
@@ -154,7 +154,7 @@ curl -H "X-API-Key: guardianai_dev_key_2024" \
 import requests
 
 API_URL = "http://localhost:8000/api/dashboard"
-API_KEY = "guardianai_dev_key_2024"
+API_KEY = "SaviorAI_dev_key_2024"
 HEADERS = {"X-API-Key": API_KEY}
 
 # Get overview
@@ -260,7 +260,7 @@ CREATE INDEX idx_intervention_student_time ON interventions(student_id, triggere
 
 4. **Test overview endpoint** (with auth)
    ```bash
-   curl -H "X-API-Key: guardianai_dev_key_2024" \
+   curl -H "X-API-Key: SaviorAI_dev_key_2024" \
      http://localhost:8000/api/dashboard/YOUR_UUID/overview
    ```
 
@@ -449,3 +449,4 @@ The Dashboard API is **production-ready** for hackathon demo!
 ---
 
 Built for **FAR AWAY 2026** - Agentic & Autonomous Systems 🚀
+

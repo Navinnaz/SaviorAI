@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { getOverview, getHeatmap, getCohorts } from '../utils/api'
 import RiskHeatmap from '../components/RiskHeatmap'
 

@@ -1,5 +1,5 @@
 """
-GuardianAI - Cohort Anomaly Detector Test Suite
+SaviorAI - Cohort Anomaly Detector Test Suite
 
 Tests for systemic stressor detection across student cohorts.
 Validates batch-level anomaly identification.
@@ -326,7 +326,7 @@ def test_exact_threshold():
 def run_all_tests():
     """Run all tests"""
     print("\n" + "="*70)
-    print(" "*10 + "GuardianAI Cohort Anomaly Detector Test Suite")
+    print(" "*10 + "SaviorAI Cohort Anomaly Detector Test Suite")
     print("="*70)
     
     tests = [
@@ -374,3 +374,4 @@ if __name__ == "__main__":
     
     success = run_all_tests()
     sys.exit(0 if success else 1)
+

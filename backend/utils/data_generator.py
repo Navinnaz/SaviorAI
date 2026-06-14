@@ -1,5 +1,5 @@
 """
-GuardianAI Demo Data Generator
+SaviorAI Demo Data Generator
 
 Generates realistic synthetic data for demo purposes with distinct personas:
 - Persona A: Crisis student (Priya Sharma) - flagship demo
@@ -11,7 +11,7 @@ Generates realistic synthetic data for demo purposes with distinct personas:
 import random
 from datetime import datetime, timedelta
 from typing import List, Dict, Tuple
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 
 # Indian names for realistic demo
@@ -31,12 +31,18 @@ INDIAN_LAST_NAMES = [
     "Sethi", "Dutta", "Ghosh", "Mukherjee", "Chatterjee", "Roy", "Das"
 ]
 
+# PERMANENT DEMO INSTITUTION UUID
+# This UUID is hardcoded and MUST match frontend/src/config.js DEMO_INSTITUTION_ID
+# It will persist across --reset runs and should NEVER be deleted from the database
+DEMO_INSTITUTION_UUID = UUID("88353031-000c-4b80-b091-89fe65849734")
+
 
 class DemoDataGenerator:
-    """Generate realistic demo data for GuardianAI."""
+    """Generate realistic demo data for SaviorAI."""
     
     def __init__(self):
-        self.institution_id = uuid4()
+        # Use the permanent demo institution UUID
+        self.institution_id = DEMO_INSTITUTION_UUID
         self.students_data = []
         self.checkins_data = []
         self.burnout_states_data = []
@@ -89,9 +95,10 @@ class DemoDataGenerator:
     
     def _generate_persona_a_crisis(self):
         """
-        PERSONA A: Priya Sharma - Flagship demo student in crisis.
+        PERSONA A: Priya Sharma - Flagship demo student.
         
-        14-day declining pattern leading to crisis intervention.
+        STABLE 14-day pattern for demo initialization.
+        Will transition to crisis during --live scenario.
         """
         student_id = uuid4()
         
@@ -110,19 +117,20 @@ class DemoDataGenerator:
         }
         self.students_data.append(student)
         
-        # 14-day declining pattern
-        scores = [4, 4, 3, 4, 3, 3, 2, 2, 2, 1, 2, 1, 1, 2]
+        # STABLE 14-day pattern - GREEN card on dashboard
+        scores = [4, 4, 5, 3, 4, 4, 3, 4, 5, 4, 3, 4, 4, 3]
         onewords = [
-            "okay", "good", "tired", "okay", "stressed", "stressed",
-            "exhausted", "drained", "lost", "empty", "lost", 
-            "hopeless", "empty", "lost"
+            "good", "okay", "great", "tired", "good", "focused", "okay",
+            "good", "amazing", "calm", "tired", "good", "okay", "fine"
         ]
         sentiments = [
-            "neutral", "positive", "neutral", "neutral", "negative", "negative",
-            "negative", "negative", "concerning", "concerning", "concerning",
-            "concerning", "concerning", "concerning"
+            "positive", "neutral", "positive", "neutral", "positive", "positive", "neutral",
+            "positive", "positive", "positive", "neutral", "positive", "neutral", "neutral"
         ]
-        ate_properly = ["yes", "yes", "yes", "yes", "mostly", "mostly", "mostly", "no", "no", "no", "no", "no", "no", "mostly"]
+        ate_properly = [
+            "yes", "yes", "yes", "mostly", "yes", "yes", "mostly",
+            "yes", "yes", "yes", "mostly", "yes", "yes", "yes"
+        ]
         
         # Generate check-ins
         for i in range(14):
@@ -140,57 +148,28 @@ class DemoDataGenerator:
             }
             self.checkins_data.append(checkin)
         
-        # Burnout state: CRISIS
+        # Burnout state: STABLE (will be computed properly after setup)
+        # Calculate proper state based on stable scores
+        avg_score = sum(scores) / len(scores)  # Should be ~3.9
+        trend = avg_score - student["baseline_score"]  # ~0.1
+        
         burnout_state = {
             "id": uuid4(),
             "student_id": student_id,
-            "assessed_at": datetime.utcnow() - timedelta(hours=4),
-            "state": "crisis",
-            "hmm_probability": 0.92,
-            "trend_score": -1.8,  # Severe decline
-            "consecutive_low_days": 6,
+            "assessed_at": datetime.utcnow() - timedelta(minutes=10),
+            "state": "stable",
+            "hmm_probability": 0.15,  # Low probability of burnout
+            "trend_score": trend,
+            "consecutive_low_days": 0,
             "variance_flag": False,
             "cohort_flag": False
         }
         self.burnout_states_data.append(burnout_state)
         
-        # Level 3 Emergency Intervention
-        intervention = {
-            "id": uuid4(),
-            "student_id": student_id,
-            "triggered_at": datetime.utcnow() - timedelta(hours=4),
-            "level": 3,
-            "trigger_reason": (
-                "CRITICAL: Student in crisis state for 2 consecutive days. "
-                "HMM probability: 0.92 (>0.7 threshold). "
-                "6 consecutive days with scores ≤2. "
-                "Trend score: -1.8 (severe decline from baseline 3.8). "
-                "Recent one-words: 'lost', 'hopeless', 'empty', 'lost' - all concerning sentiment. "
-                "Immediate escalation required."
-            ),
-            "action_taken": "send",
-            "message_sent": (
-                "🚨 EMERGENCY ALERT\n\n"
-                "Student: Priya Sharma (CSE-2022)\n"
-                "Status: CRISIS - Immediate intervention required\n\n"
-                "Pattern detected:\n"
-                "• 6 consecutive days of severe low mood (scores 1-2)\n"
-                "• Concerning language: 'hopeless', 'empty', 'lost'\n"
-                "• Not eating properly for 4 days\n"
-                "• Severe decline from baseline (3.8 → 1.3 avg)\n\n"
-                "Recommended action:\n"
-                "• Immediate counsellor outreach (within 2 hours)\n"
-                "• Consider emergency contact notification\n"
-                "• Monitor for self-harm risk\n\n"
-                "Contact: +919876500001"
-            ),
-            "recipient": "counsellor",
-            "was_acknowledged": False,
-            "outcome": "pending"
-        }
-        self.interventions_data.append(intervention)
+        # NO pre-created interventions - she's stable!
+        # Intervention will be triggered during --live scenario
         
-        print("  ✅ Persona A: Priya Sharma (crisis) - flagship demo")
+        print("  ✅ Persona A: Priya Sharma (STABLE) - demo ready for live crisis injection")
     
     def _generate_persona_b_gaming(self, count: int):
         """
@@ -527,3 +506,4 @@ def generate_demo_data(num_students: int = 50) -> Dict:
     """
     generator = DemoDataGenerator()
     return generator.generate_all(num_students)
+
